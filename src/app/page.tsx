@@ -1,18 +1,26 @@
 import Image from "next/image";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Hero from "./components/home/Hero";
+import AreaSchedule from "./components/home/AreaSchedule";
+import CurrentOutages from "./components/home/CurrentOutages";
+import Services from "./components/home/Services";
+import FAQ from "./components/home/FAQ";
 
 export default function Home() {
     return (
         <div className="flex flex-col min-h-screen">
-            <Navbar />
+              
+                <main className="flex-grow">
             
-            {/* এখানে তোমার মেইন কন্টেন্ট বা পেজের বাকি অংশ থাকবে */}
-            <main className="flex-grow">
-                {/* Content goes here */}
+              
+      <Hero />
+      {/* <AreaSchedule/> */}
+      {/* <CurrentOutages /> */}
+      <Services/>
+      <FAQ/>
+    
             </main>
-
-            <Footer />
         </div>
     );
 }

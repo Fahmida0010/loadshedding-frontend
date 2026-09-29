@@ -1,5 +1,4 @@
 import Link from "next/link";
-import s from "@/components/public/public.module.css";
 export const metadata = { title: "About | PowerGrid" };
 export default function ContactPage() {
   return <div className={`${s.wrap} ${s.page}`}><p className={s.eyebrow}>About the project</p><h1 className={s.pageTitle}>Clear information.<br />More coordinated power management.</h1><p className={s.lead}>PowerGrid is a load shedding and outage management project designed to connect customers, technicians and administrators.</p>
