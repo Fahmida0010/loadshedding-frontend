@@ -1,0 +1,10 @@
+import Link from "next/link";
+import s from "@/components/public/public.module.css";
+export const metadata = { title: "About | PowerGrid" };
+export default function ContactPage() {
+  return <div className={`${s.wrap} ${s.page}`}><p className={s.eyebrow}>About the project</p><h1 className={s.pageTitle}>Clear information.<br />More coordinated power management.</h1><p className={s.lead}>PowerGrid is a load shedding and outage management project designed to connect customers, technicians and administrators.</p>
+    <section className={s.section}><div className={s.two}><article className={s.card}><h2>Our purpose</h2><p className={s.muted}>Make planned interruptions easier to find and unexpected outages easier to track.</p></article><article className={s.card}><h2>How the system connects</h2><p className={s.muted}>Distribution zones contain substations, substations contain feeders, and feeders serve areas. Schedules and outage reports are associated with those areas.</p></article></div></section>
+    <section className={s.section}><h2>Three roles, one connected workflow</h2><div className={s.grid}>{[["Customers", "View schedules, report unexpected outages and manage bills through their dashboard."], ["Technicians", "Review assigned issues and update repair progress through their dashboard."], ["Administrators", "Manage infrastructure, users, schedules, outages and technician assignments."]].map(([title, text]) => <article key={title} className={s.card}><h3>{title}</h3><p className={s.muted}>{text}</p></article>)}</div><p className={s.muted}>These describe the full project's intended roles. This public-page preview includes sample information only.</p></section>
+    <section className={s.cta}><h2>Start with your area</h2><p>Explore a sample schedule and see how the information is organized.</p><Link href="/schedules" className={s.button}>Explore schedules →</Link></section>
+  </div>;
+}
