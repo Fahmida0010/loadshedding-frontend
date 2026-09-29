@@ -12,10 +12,12 @@
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.102.8",
+		"axios": "^1.20.0",
 		"lucide-react": "^1.48.0",
 		"next": "16.3.5",
 		"react": "19.2.8",
-		"react-dom": "19.2.8"
+		"react-dom": "19.2.8",
+		"zustand": "^5.0.15"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.14",

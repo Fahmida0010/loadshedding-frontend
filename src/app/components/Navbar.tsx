@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import Logo from "./Logo"; // তোমার তৈরি করা Logo কম্পোনেন্ট ইম্পোর্ট করা হলো
+import Logo from "./Logo";
 
 interface NavbarProps {
     onToggleSidebar?: () => void;
@@ -44,11 +44,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
             {/* Right Side: Emergency Alert, Notifications & Profile / Login */}
             <div className="flex items-center gap-4">
                 
-                {/* Emergency Helpline Badge (Desktop view) */}
-                <div className="hidden xl:flex items-center gap-2 bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-xs font-semibold border border-red-200">
-                    <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
-                    Emergency Helpline: 16123
-                </div>
+            
 
                 {/* Notification Bell with Badge */}
                 <button
@@ -116,7 +112,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                 ) : (
                     /* Login Button if user is not logged in */
                     <Link
-                        href="/login"
+                        href="/auth/login"
                         className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
                     >
                         Login

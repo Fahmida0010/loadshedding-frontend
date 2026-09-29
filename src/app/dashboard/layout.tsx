@@ -35,7 +35,6 @@ const menus: Record<Role, MenuItem[]> = {
   ADMIN: [
     { label: "Overview", href: "/dashboard/admin" },
     { label: "Users", href: "/dashboard/admin/users" },
-    { label: "Infrastructure", href: "/dashboard/admin/infrastructure" },
     { label: "Schedules", href: "/dashboard/admin/schedules" },
     { label: "Outages", href: "/dashboard/admin/outages" },
     { label: "Assignments", href: "/dashboard/admin/assignments" },
