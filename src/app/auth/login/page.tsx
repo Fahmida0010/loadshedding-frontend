@@ -108,7 +108,7 @@ redirectBasedOnRole(userData.role);
         
         {/* Header */}
         <div className="text-center space-y-1">
-          <h1 className="text-3xl font-extrabold text-gray-900">Welcome Back 👋</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">Welcome Back </h1>
           <p className="text-sm text-gray-600">Login to your account</p>
         </div>
 
@@ -171,7 +171,7 @@ redirectBasedOnRole(userData.role);
             disabled={loading}
             className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
           >
-            {loading ? "Logging in..." : "🔐 Login"}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

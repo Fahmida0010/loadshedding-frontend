@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "./Logo";
 import { useAuthStore } from "@/src/store/useAuthStore";
+import { LogOut } from "lucide-react";
 
 interface NavbarProps {
     onToggleSidebar?: () => void;
@@ -134,7 +135,9 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                             onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                             className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 focus:outline-none"
                         >
-                            <div className="w-9 h-9 rounded-full bg-amber-500 text-white flex items-center justify-center font-semibold text-sm shadow-inner overflow-hidden border border-amber-600">
+                            <div className="w-9 h-9 rounded-full bg-amber-500 text-white flex 
+                            items-center justify-center font-semibold text-sm shadow-inner overflow-hidden
+                             border border-amber-600">
                                 {user?.avatar || user?.name?.charAt(0) || "U"}
                             </div>
                             <div className="hidden sm:block text-left">
@@ -171,6 +174,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                                     }}
                                     className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-700 hover:bg-red-50 transition-colors"
                                 >
+                                     <LogOut className="h-4 w-4" />
                                      Logout
                                 </button>
                             </div>
