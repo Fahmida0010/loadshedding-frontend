@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { z } from 'zod';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import { useAuthStore } from '@/src/store/useAuthStore';
+import Loading from '../loading';
 
 // Zod schema for validating unexpected outage form
 const outageReportSchema = z.object({
@@ -18,7 +18,7 @@ const outageReportSchema = z.object({
 export default function OutagesPage() {
   const { user, token } = useAuthStore();
   const queryClient = useQueryClient();
-  const axiosSecure = useAxiosSecure(); // Axios instance with auth token
+  const axiosSecure = useAxiosSecure(); 
 
   const [form, setForm] = useState({
     title: '',
@@ -32,7 +32,7 @@ export default function OutagesPage() {
   const { data: outages = [], isLoading } = useQuery({
     queryKey: ['outages'],
     queryFn: async () => {
-      const res = await axiosSecure.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/outages`);
+      const res = await axiosSecure.get('/outages');
       return res.data;
     },
   });
@@ -40,8 +40,7 @@ export default function OutagesPage() {
   // Mutation to report unexpected outage with Zod validation
   const reportMutation = useMutation({
     mutationFn: async (newOutage: any) => {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/outages`,
+      const res = await axiosSecure.post('/outages',
         newOutage,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -68,7 +67,7 @@ export default function OutagesPage() {
     reportMutation.mutate(form);
   };
 
-  if (isLoading) return <div className="p-10 text-center text-gray-600">Loading outages...</div>;
+  if (isLoading) return <Loading />;
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">

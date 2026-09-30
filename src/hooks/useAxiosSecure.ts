@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 // Ekta matro Axios instance toiri kora holo
 const axiosSecure = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1',
   timeout: 10000,
   withCredentials: true,
   headers: {

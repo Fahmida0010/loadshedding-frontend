@@ -22,7 +22,7 @@ export default function SchedulesPage() {
   const { data: schedules = [], isLoading, error: queryError } = useQuery({
     queryKey: ['schedules', statusFilter],
     queryFn: async () => {
-      const res = await axiosSecure.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/schedules`, {
+      const res = await axiosSecure.get('/schedules', {
         params: { status: statusFilter },
       });
       return res.data;
