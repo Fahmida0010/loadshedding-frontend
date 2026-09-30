@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
-
+import { useAuthStore } from '@/src/store/useAuthStore'; // Zustand store import
 
 export default function RegisterPage() {
   const router = useRouter();
   const axiosSecure = useAxiosSecure();
+  const { login } = useAuthStore(); // login action
 
   const [formData, setFormData] = useState({
     name: '',
@@ -20,6 +21,7 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,17 +33,47 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      // Backend registration endpoint (e.g., /auth/register)
       const res: any = await axiosSecure.post('/auth/register', formData);
       
-      // Token store kore dashboard ba login e pathano
-      if (res?.token) {
-        localStorage.setItem('token', res.token);
+      // Token store korar jonno
+      const token = res?.token || res?.data?.token;
+      if (token) {
+        localStorage.setItem('token', token);
       }
-      
-      router.push('/dashboard');
+
+      // User data extract kora
+      const responseUser = res?.user || res?.data?.user || {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+      };
+
+      // Zustand store e user save kora jate navbar e profile icon show kore
+      login(responseUser);
+
+      // Role onusare sothik dashboard e redirect kora
+      const role = responseUser.role;
+      if (role === 'ADMIN') {
+        router.push('/dashboard/admin');
+      } else if (role === 'TECHNICIAN') {
+        router.push('/dashboard/technician');
+      } else {
+        router.push('/dashboard/customer');
+      }
+
     } catch (err: any) {
-      setError(err.message || 'Registration failed. Please try again.');
+      console.log('Register Error:', err);
+
+      // Zod errorSources ba direct message dhorar jonno
+      if (err?.errorSources && Array.isArray(err?.errorSources) && err.errorSources.length > 0) {
+        const errorMessages = err.errorSources
+          .map((item: any) => item.message)
+          .join(' • ');
+        setError(errorMessages);
+      } else {
+        // Same email ba onnanno message ekhane catch korbe
+        setError(err?.message || err?.response?.data?.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -56,7 +88,7 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg text-center">
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg text-center font-medium">
             {error}
           </div>
         )}
@@ -89,7 +121,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
             <input
               type="text"
               name="phone"
@@ -102,15 +134,24 @@ export default function RegisterPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900 pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
 
           <div>
@@ -123,7 +164,6 @@ export default function RegisterPage() {
             >
               <option value="CUSTOMER">Customer</option>
               <option value="TECHNICIAN">Technician</option>
-              <option value="ADMIN">Admin</option>
             </select>
           </div>
 
@@ -138,7 +178,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm text-gray-600">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 font-medium hover:underline">
+          <Link href="/auth/login" className="text-blue-600 font-medium hover:underline">
             Login here
           </Link>
         </p>

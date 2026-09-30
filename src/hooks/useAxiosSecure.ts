@@ -43,6 +43,8 @@ export const useAxiosSecure = () => {
         const customError = {
           message: error.response?.data?.message || error.message || 'Something went wrong!',
           status: status || 500,
+          errorSources: error.response?.data?.errorSources || [],
+          response: error.response,
         };
         return Promise.reject(customError);
       }

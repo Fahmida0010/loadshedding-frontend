@@ -1,36 +1,37 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type UserRole = 'ADMIN' | 'TECHNICIAN' | 'CUSTOMER';
+
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'ADMIN' | 'TECHNICIAN' | 'CUSTOMER';
+    name: string;
+    email: string;
+    role: UserRole;
+    avatar?: string;
 }
 
 interface AuthState {
-  token: string | null;
-  user: User | null;
-  setAuth: (token: string, user: User) => void;
-  logout: () => void;
+    isLoggedIn: boolean;
+    user: User | null;
+    login: (userData: User) => void;
+    logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      token: null,
-      user: null,
-      setAuth: (token, user) => {
-        localStorage.setItem('token', token);
-        set({ token, user });
-      },
-      logout: () => {
-        localStorage.removeItem('token');
-        set({ token: null, user: null });
-      },
-    }),
-    {
-      name: 'auth-storage', // LocalStorage-e data persist korar jonno
-    }
-  )
+    persist(
+        (set) => ({
+            isLoggedIn: true, // Demo-r jonno true rakha hoyeche
+            user: {
+                name: "System Admin",
+                email: "admin@example.com",
+                role: "ADMIN",
+                avatar: "AD",
+            },
+            login: (userData) => set({ isLoggedIn: true, user: userData }),
+            logout: () => set({ isLoggedIn: false, user: null }),
+        }),
+        {
+            name: 'auth-storage',
+        }
+    )
 );
