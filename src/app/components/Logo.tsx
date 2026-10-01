@@ -58,7 +58,7 @@ export default function Logo({
 				</span>
 
 				<span
-					className={`${currentSize.subtitle} mt-1 font-medium uppercase tracking-[0.18em] text-gray-400`}
+					className={`${currentSize.subtitle} mt-1 font-medium uppercase tracking-[0.20em] text-gray-400`}
 				>
 					Power Management
 				</span>
