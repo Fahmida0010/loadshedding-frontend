@@ -4,34 +4,39 @@ import { persist } from 'zustand/middleware';
 export type UserRole = 'ADMIN' | 'TECHNICIAN' | 'CUSTOMER';
 
 interface User {
+    id?: string; 
     name: string;
     email: string;
+    phone?: string;
     role: UserRole;
     avatar?: string;
+    profileImage?: string;
 }
 
 interface AuthState {
     isLoggedIn: boolean;
     user: User | null;
-    login: (userData: User) => void;
+    token: string | null;
+    hasHydrated: boolean;
+    login: (userData: User, token: string | null) => void;
     logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
-            isLoggedIn: true, // Demo-r jonno true rakha hoyeche
-            user: {
-                name: "System Admin",
-                email: "admin@example.com",
-                role: "ADMIN",
-                avatar: "AD",
-            },
-            login: (userData) => set({ isLoggedIn: true, user: userData }),
-            logout: () => set({ isLoggedIn: false, user: null }),
+            isLoggedIn: false,
+            user: null,
+            token: null,
+            hasHydrated: false,
+            login: (userData, token) => set({ isLoggedIn: true, user: userData, token }),
+            logout: () => set({ isLoggedIn: false, user: null, token: null }),
         }),
         {
-            name: 'auth-storage',
+            name: 'auth-storage', 
+            onRehydrateStorage: () => (state) => {
+                state?.setHasHydrated(true); 
+            },
         }
     )
 );

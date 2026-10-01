@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // Password seen/unseen state
+  const [showPassword, setShowPassword] = useState(false); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,13 +25,13 @@ export default function LoginPage() {
 
     try {
       const res: any = await axiosSecure.post('/auth/login', { email, password });
-      
-      if (res?.token) {
-        localStorage.setItem('token', res.token);
+      const token = res?.accessToken || res?.data?.accessToken;
+      if (token) {
+        localStorage.setItem('token',token);
       }
 
-  // Normal login e evabe data extract korun:
-const responseData = res?.data || res; // jodi axios direct data return na kore whole response dey
+  
+const responseData = res?.data || res; 
 
 const userData = {
   name: responseData?.user?.name || email.split('@')[0],
@@ -40,7 +40,7 @@ const userData = {
   avatar: responseData?.user?.profileImage || responseData?.user?.name?.charAt(0).toUpperCase() || 'A',
 };
 
-login(userData);
+login(userData, token);
 redirectBasedOnRole(userData.role);
 
     } catch (err: any) {
@@ -56,18 +56,21 @@ redirectBasedOnRole(userData.role);
     setError(null);
 
     const demoCredentials = {
-      ADMIN: { email: 'admin@demo.com', password: 'password123', name: 'Ashraf Aman' },
-      TECHNICIAN: { email: 'technician@demo.com', password: 'password123', name: 'Sarbuland khan' },
-      CUSTOMER: { email: 'customer@demo.com', password: 'password123', name: 'Zarmala Akter' },
+      ADMIN: { email: 'admin@demo.com', password: 'Password123', name: 'Ashraf Aman' },
+      TECHNICIAN: { email: 'technician@demo.com', password: 'Password456', name: 'Sarbuland khan' },
+      CUSTOMER: { email: 'customer@demo.com', password: 'Password789', name: 'Zarmala Akter' },
     };
 
     const credentials = demoCredentials[roleType];
 
     try {
       const res: any = await axiosSecure.post('/auth/login', credentials);
-      if (res?.token) {
-        localStorage.setItem('token', res.token);
-      }
+    
+    const token = res?.accessToken || res?.data?.accessToken || 'demo-token-' + roleType.toLowerCase();
+     
+    
+        localStorage.setItem('token', token);
+      
       
       const userData = {
         name: res?.user?.name || credentials.name,
@@ -76,11 +79,12 @@ redirectBasedOnRole(userData.role);
         avatar: roleType.charAt(0),
       };
 
-      login(userData);
+      login(userData, token);
       redirectBasedOnRole(roleType);
     } catch (err: any) {
       // Fallback demo login jodi backend e demo account seed kora na thake
-      localStorage.setItem('token', 'demo-token-' + roleType.toLowerCase());
+      const fallbackToken = 'demo-token-' + roleType.toLowerCase();
+  localStorage.setItem('token', fallbackToken);
       
       const fallbackUser = {
         name: credentials.name,

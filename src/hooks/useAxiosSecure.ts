@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/src/store/useAuthStore';
 
 // Ekta matro Axios instance toiri kora holo
 const axiosSecure = axios.create({
@@ -16,12 +17,14 @@ const axiosSecure = axios.create({
 
 export const useAxiosSecure = () => {
   const router = useRouter();
+  const { token: storeToken } = useAuthStore();
+  
 
   useEffect(() => {
     // Request Interceptor: Token thakle attach korbe, na thakle normally jabe (Public & Private both)
     const requestInterceptor = axiosSecure.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
+        const token = storeToken || localStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,7 +40,7 @@ export const useAxiosSecure = () => {
         const status = error.response?.status;
         if (status === 401 || status === 403) {
           localStorage.removeItem('token');
-          router.push('/login');
+          router.push('/auth/login');
         }
         
         const customError = {

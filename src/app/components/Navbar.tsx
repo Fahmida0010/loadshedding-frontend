@@ -138,7 +138,8 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                             <div className="w-9 h-9 rounded-full bg-amber-500 text-white flex 
                             items-center justify-center font-semibold text-sm shadow-inner overflow-hidden
                              border border-amber-600">
-                                {user?.avatar || user?.name?.charAt(0) || "U"}
+                                {user?.name?.charAt(0) || user?.avatar || "U"}
+                        
                             </div>
                             <div className="hidden sm:block text-left">
                                 <p className="text-sm font-medium text-slate-800 leading-tight">
@@ -155,7 +156,8 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                                 <div className="px-4 py-2 border-b border-slate-100">
                                     <p className="text-sm font-semibold text-slate-800">{user?.name}</p>
                                     <p className="text-xs text-slate-500 truncate">{user?.email}</p>
-                                    <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-800 rounded-full">
+                                    <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold bg-amber-100
+                                     text-amber-800 rounded-full">
                                         {user?.role}
                                     </span>
                                 </div>

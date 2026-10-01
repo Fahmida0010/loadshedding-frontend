@@ -22,6 +22,7 @@ import {
   Home, 
   Layers
 } from "lucide-react";
+import Loading from "../loading";
 
 type MenuItem = {
   label: string;
@@ -62,20 +63,16 @@ const menus: Record<UserRole, MenuItem[]> = {
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isLoggedIn, user, logout } = useAuthStore();
+  const { isLoggedIn, user, logout,hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    if (!isLoggedIn || !user) {
+    if (hasHydrated && (!isLoggedIn || !user)) {
       router.replace('/auth/login');
     }
   }, [isLoggedIn, user, router]);
 
   if (!isLoggedIn || !user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-slate-500 font-medium">
-        Loading dashboard...
-      </div>
-    );
+    return <Loading/>;
   }
 
   const handleLogout = () => {
@@ -126,28 +123,29 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </nav>
 
            
-            <div className="space-y-1">
+            <div className="space-y-1 mt-4">
+              {/* Profile Link Updated */}
               <Link
-                href="/profile"
+                href="/dashboard/profile"
                 className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all ${
-                  pathname === '/profile'
+                  pathname === '/dashboard/profile'
                     ? "bg-amber-500 text-white"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
-                <User className="h-4 w-4 text-slate-500" />
+                <User className={`h-4 w-4 ${pathname === '/dashboard/profile' ? "text-white" : "text-slate-500"}`} />
                 Profile
               </Link>
 
               <Link
-                href="/settings"
+                href="/dashboard/settings"
                 className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all ${
-                  pathname === '/settings'
+                  pathname === '/dashboard/settings'
                     ? "bg-amber-500 text-white"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
-                <Settings className="h-4 w-4 text-slate-500" />
+                <Settings className={`h-4 w-4 ${pathname === '/dashboard/settings' ? "text-white" : "text-slate-500"}`} />
                 Settings
               </Link>
 
@@ -163,7 +161,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Bottom Logout Button */}
-        <div className="p-4 border-t border-slate-100">
+        <div className="p-4 border-t border-slate-100 mt-auto">
           <button
             onClick={handleLogout}
             className="w-full flex items-center 
