@@ -93,7 +93,7 @@ redirectBasedOnRole(userData.role);
         avatar: roleType.charAt(0),
       };
 
-      login(fallbackUser);
+      login(fallbackUser, fallbackToken);
       redirectBasedOnRole(roleType);
     } finally {
       setLoading(false);

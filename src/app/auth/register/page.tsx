@@ -49,7 +49,7 @@ export default function RegisterPage() {
       };
 
       // Zustand store e user save kora jate navbar e profile icon show kore
-      login(responseUser);
+      login(responseUser,token);
 
       // Role onusare sothik dashboard e redirect kora
       const role = responseUser.role;
