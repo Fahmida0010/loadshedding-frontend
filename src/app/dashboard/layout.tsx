@@ -154,7 +154,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all"
               >
                 <Home className="h-4 w-4 text-slate-500" />
-                Go Back to Home Page
+                Go Back Home 
               </Link>
             </div>
           </div>

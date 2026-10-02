@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useAxiosSecure } from "@/src/hooks/useAxiosSecure"; // Apnar project er path onujayi thik kore neben
+import { useAuthStore } from "@/src/store/useAuthStore";     // Apnar project er path onujayi thik kore neben
 import Swal from "sweetalert2";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaWarehouse } from "react-icons/fa";
-import { useAxiosSecure } from "@/src/hooks/useAxiosSecure";
-import { useAuthStore } from "@/src/store/useAuthStore";
 
 interface DistributionZone {
   id: string;
@@ -43,13 +43,12 @@ export default function AdminDistributionZones() {
       const response = await axiosSecure.get(`/distribution-zones`, {
         params: { searchTerm, page, limit },
       });
-      // Response structure depending on backend (e.g., response.data.data or response.data)
       setZones(response.data?.data || response.data || []);
     } catch (error: any) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: error?.response?.data?.message || "Distribution zones load korte somossa hocche!",
+        text: error?.response?.data?.message || "Failed to load distribution zones!",
       });
     } finally {
       setLoading(false);
@@ -90,22 +89,20 @@ export default function AdminDistributionZones() {
     e.preventDefault();
     try {
       if (isEditMode && selectedZoneId) {
-        // Update API Call (PATCH /distribution-zones/:id)
         await axiosSecure.patch(`/distribution-zones/${selectedZoneId}`, formData);
         Swal.fire({
           icon: "success",
           title: "Successful!",
-          text: "Distribution zone successfully update kora hoyeche.",
+          text: "Distribution zone successfully updated.",
           timer: 1500,
           showConfirmButton: false,
         });
       } else {
-        // Create API Call (POST /distribution-zones)
         await axiosSecure.post(`/distribution-zones`, formData);
         Swal.fire({
           icon: "success",
           title: "Successful!",
-          text: "Notun distribution zone successfully create kora hoyeche.",
+          text: "New distribution zone successfully created.",
           timer: 1500,
           showConfirmButton: false,
         });
@@ -116,17 +113,16 @@ export default function AdminDistributionZones() {
       Swal.fire({
         icon: "error",
         title: "Failed!",
-        text: error?.response?.data?.message || "Kajti somponno korte somossa hoyeche.",
+        text: error?.response?.data?.message || "Something went wrong while processing your request.",
       });
     }
   };
 
   // Handle Delete (DELETE /distribution-zones/:id)
   const handleDelete = async (id: string) => {
-    const result = apniSwalConfirm(); // Custom confirm or direct swal
     Swal.fire({
-      title: "Apni ki sure?",
-      text: "Ei distribution zone-ti delete kore dite chan? Zone e substation thakle delete hobena!",
+      title: "Are you sure?",
+      text: "Do you want to delete this distribution zone? It cannot be deleted if it contains substations!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -137,13 +133,13 @@ export default function AdminDistributionZones() {
       if (result.isConfirmed) {
         try {
           await axiosSecure.delete(`/distribution-zones/${id}`);
-          Swal.fire("Deleted!", "Distribution zone-ti delete kora hoyeche.", "success");
+          Swal.fire("Deleted!", "Distribution zone has been deleted successfully.", "success");
           fetchZones();
         } catch (error: any) {
           Swal.fire({
             icon: "error",
             title: "Delete Failed",
-            text: error?.response?.data?.message || "Zone a substations thakte pare ba onno somossa.",
+            text: error?.response?.data?.message || "Zone may contain active substations or other dependencies.",
           });
         }
       }
@@ -159,7 +155,7 @@ export default function AdminDistributionZones() {
             <FaWarehouse className="text-blue-600" /> Distribution Zones Management
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Admin hisebe sob distribution zones gulo dekhun, create ba update korun.
+            Manage all your power distribution zones efficiently as an admin.
           </p>
         </div>
         <button
@@ -186,66 +182,105 @@ export default function AdminDistributionZones() {
         </div>
       </div>
 
-      {/* Responsive Table / Card View */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      {/* Content Section: Loader / Empty / Responsive Data Display */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        </div>
+      ) : zones.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 text-center py-16 text-gray-500">
+          No distribution zones found.
+        </div>
+      ) : (
+        <>
+          {/* Mobile & Small Screen: Card Method (Visible on screens smaller than md) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+            {zones.map((zone) => (
+              <div key={zone.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-start gap-2 mb-2">
+                    <h3 className="font-semibold text-gray-900 text-base">{zone.name}</h3>
+                    <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-semibold shrink-0">
+                      {zone.code}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+                    {zone.description || "No description provided."}
+                  </p>
+                  <p className="text-xs text-gray-400 mb-4">
+                    Created: {new Date(zone.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex justify-end items-center gap-2 pt-3 border-t border-gray-100">
+                  <button
+                    onClick={() => handleOpenEditModal(zone)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg text-xs font-medium transition"
+                  >
+                    <FaEdit size={12} /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(zone.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-medium transition"
+                  >
+                    <FaTrash size={12} /> Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ) : zones.length === 0 ? (
-          <div className="text-center py-16 text-gray-500">
-            Kono distribution zone pawa jayni.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-xs uppercase tracking-wider">
-                  <th className="py-3 px-4 font-semibold">Name</th>
-                  <th className="py-3 px-4 font-semibold">Code</th>
-                  <th className="py-3 px-4 font-semibold">Description</th>
-                  <th className="py-3 px-4 font-semibold">Created At</th>
-                  <th className="py-3 px-4 font-semibold text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
-                {zones.map((zone) => (
-                  <tr key={zone.id} className="hover:bg-gray-50/50 transition">
-                    <td className="py-3 px-4 font-medium text-gray-900">{zone.name}</td>
-                    <td className="py-3 px-4">
-                      <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md text-xs font-semibold">
-                        {zone.code}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-500 truncate max-w-xs">
-                      {zone.description || "N/A"}
-                    </td>
-                    <td className="py-3 px-4 text-gray-500">
-                      {new Date(zone.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 px-4 text-center space-x-2">
-                      <button
-                        onClick={() => handleOpenEditModal(zone)}
-                        className="inline-flex items-center justify-center p-2 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition"
-                        title="Edit Zone"
-                      >
-                        <FaEdit size={14} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(zone.id)}
-                        className="inline-flex items-center justify-center p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
-                        title="Delete Zone"
-                      >
-                        <FaTrash size={14} />
-                      </button>
-                    </td>
+
+          {/* Medium & Large Screen: Table Method (Hidden on small screens, visible on md and up) */}
+          <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-xs uppercase tracking-wider">
+                    <th className="py-3 px-4 font-semibold">Name</th>
+                    <th className="py-3 px-4 font-semibold">Code</th>
+                    <th className="py-3 px-4 font-semibold">Description</th>
+                    <th className="py-3 px-4 font-semibold">Created At</th>
+                    <th className="py-3 px-4 font-semibold text-center">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+                  {zones.map((zone) => (
+                    <tr key={zone.id} className="hover:bg-gray-50/50 transition">
+                      <td className="py-3 px-4 font-medium text-gray-900">{zone.name}</td>
+                      <td className="py-3 px-4">
+                        <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md text-xs font-semibold">
+                          {zone.code}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-gray-500 truncate max-w-xs">
+                        {zone.description || "N/A"}
+                      </td>
+                      <td className="py-3 px-4 text-gray-500">
+                        {new Date(zone.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 px-4 text-center space-x-2">
+                        <button
+                          onClick={() => handleOpenEditModal(zone)}
+                          className="inline-flex items-center justify-center p-2 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition"
+                          title="Edit Zone"
+                        >
+                          <FaEdit size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(zone.id)}
+                          className="inline-flex items-center justify-center p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
+                          title="Delete Zone"
+                        >
+                          <FaTrash size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Modal for Create / Edit */}
       {isModalOpen && (
