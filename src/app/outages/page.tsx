@@ -97,7 +97,7 @@ export default function Outages() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white p-6 rounded-2xl shadow-md">
+      <div className=" text-orange-500 p-6 ">
         <h1 className="text-3xl font-bold">Unexpected Outages & Reports 🛠️</h1>
         <p className="text-sm opacity-90 mt-1">Track active power outages or report a sudden failure in your zone instantly.</p>
       </div>

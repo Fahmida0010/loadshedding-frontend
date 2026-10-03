@@ -41,7 +41,7 @@ const menus: Record<UserRole, MenuItem[]> = {
   CUSTOMER: [
     { label: "Overview", href: "/dashboard/customer", icon: LayoutDashboard },
     { label: "My Reports", href: "/dashboard/customer/my-reports", icon: FileText },
-    { label: "Bills & Payments", href: "/dashboard/customer/bills", icon: CreditCard },
+    { label: "Bills & Payments", href: "/dashboard/customer/payments", icon: CreditCard },
   ],
   TECHNICIAN: [
     { label: "Overview", href: "/dashboard/technician", icon: LayoutDashboard },
