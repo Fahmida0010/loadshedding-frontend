@@ -40,7 +40,7 @@ const dashboardHome: Record<UserRole, string> = {
 const menus: Record<UserRole, MenuItem[]> = {
   CUSTOMER: [
     { label: "Overview", href: "/dashboard/customer", icon: LayoutDashboard },
-    { label: "My Reports", href: "/dashboard/customer/reports", icon: FileText },
+    { label: "My Reports", href: "/dashboard/customer/my-reports", icon: FileText },
     { label: "Bills & Payments", href: "/dashboard/customer/bills", icon: CreditCard },
   ],
   TECHNICIAN: [
@@ -55,6 +55,7 @@ const menus: Record<UserRole, MenuItem[]> = {
     { label: "Distribution Zones", href: "/dashboard/admin/distribution-zones", icon: MapPin },
     { label: "Payments", href: "/dashboard/admin/payments", icon: CreditCard },
     { label: "Feeders", href: "/dashboard/admin/feeders", icon: Zap },
+       { label: "Areas", href: "/dashboard/admin/areas", icon: Zap },
     { label: "Outages", href: "/dashboard/admin/outages", icon: AlertTriangle },
     { label: "Assignments", href: "/dashboard/admin/assignments", icon: UserCheck },
   ],

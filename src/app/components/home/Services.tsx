@@ -29,7 +29,7 @@ const defaultServices: Service[] = [
     title: "Report an outage",
     description:
       "Submit an unexpected power interruption through your customer dashboard.",
-    href: "/dashboard/customer/reports",
+    href: "/outages",
     linkText: "Report an issue",
   },
   {
