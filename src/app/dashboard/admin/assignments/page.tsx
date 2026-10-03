@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAxiosSecure } from "@/src/hooks/useAxiosSecure"; // Apnar project er path onujayi thik kore neben
-import { useAuthStore } from "@/src/store/useAuthStore";     // Apnar project er path onujayi thik kore neben
+import { useAxiosSecure } from "@/src/hooks/useAxiosSecure"; 
+import { useAuthStore } from "@/src/store/useAuthStore";     
 import Swal from "sweetalert2";
-import { FaTasks, FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
+import { FaTasks, FaEdit, FaTrash, FaSearch, FaUserPlus } from "react-icons/fa";
 
 interface UserInfo {
   id: string;
   name: string;
   email: string;
   phone?: string;
+  role: string;
 }
 
 interface OutageInfo {
@@ -62,13 +63,22 @@ export default function AdminAssignments() {
     notes: "",
   });
 
-  // Fetch Technicians (Assuming users with role TECHNICIAN)
+  // Fetch Technicians using the route: GET /users (filtering TECHNICIAN on client-side safely)
   const fetchTechnicians = async () => {
     try {
-      const response = await axiosSecure.get(`/users?role=TECHNICIAN`);
-      setTechnicians(response.data?.data || response.data || []);
-    } catch (error) {
-      console.error("Failed to load technicians", error);
+      const response = await axiosSecure.get(`/admin/users`);
+      
+      // Handle different possible backend response structures
+      const responseData = response.data;
+      const usersArray = Array.isArray(responseData) 
+        ? responseData 
+        : responseData?.data || responseData?.users || [];
+      
+      // Filter out only technicians
+      const techList = usersArray.filter((u: UserInfo) => u.role === "TECHNICIAN");
+      setTechnicians(techList);
+    } catch (error: any) {
+      console.error("Failed to load technicians", error?.response?.data || error.message || error);
     }
   };
 
@@ -76,7 +86,11 @@ export default function AdminAssignments() {
   const fetchOutages = async () => {
     try {
       const response = await axiosSecure.get(`/outages?status=REPORTED,CONFIRMED`);
-      setOutages(response.data?.data || response.data || []);
+      const responseData = response.data;
+      const outagesArray = Array.isArray(responseData) 
+        ? responseData 
+        : responseData?.data || [];
+      setOutages(outagesArray);
     } catch (error) {
       console.error("Failed to load outages", error);
     }
@@ -94,7 +108,11 @@ export default function AdminAssignments() {
           limit,
         },
       });
-      setAssignments(response.data?.data || response.data || []);
+      const responseData = response.data;
+      const assignmentsArray = Array.isArray(responseData) 
+        ? responseData 
+        : responseData?.data || [];
+      setAssignments(assignmentsArray);
     } catch (error: any) {
       Swal.fire({
         icon: "error",
@@ -296,7 +314,7 @@ export default function AdminAssignments() {
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mb-1">
-                    <span className="font-medium">Technician:</span> {item.technician?.name || "N/A"}
+                    <span className="font-medium">Technician:</span> {item.technician?.name || "N/A"} ({item.technician?.email || ""})
                   </p>
                   <p className="text-xs text-gray-500 mb-1">
                     <span className="font-medium">Assigned By:</span> {item.assignedBy?.name || "N/A"}
@@ -431,11 +449,15 @@ export default function AdminAssignments() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm bg-white"
                 >
                   <option value="">Select a technician...</option>
-                  {technicians.map((tech) => (
-                    <option key={tech.id} value={tech.id}>
-                      {tech.name} ({tech.email})
-                    </option>
-                  ))}
+                  {technicians.length > 0 ? (
+                    technicians.map((tech) => (
+                      <option key={tech.id} value={tech.id}>
+                        {tech.name} — ({tech.email})
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>No technicians found</option>
+                  )}
                 </select>
               </div>
 
