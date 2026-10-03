@@ -15,7 +15,6 @@ export default function CustomerPaymentsPage() {
   const { data: bills = [], isLoading } = useQuery({
     queryKey: ['customer-bills'],
     queryFn: async () => {
-      // Apnader backend-er bill list endpoint (e.g. /bills ba /bills/my-bills)
       const res = await axiosSecure.get('/bills/my-bills'); 
       return res.data?.data || res.data;
     },
@@ -32,8 +31,8 @@ export default function CustomerPaymentsPage() {
       return res.data;
     },
     onSuccess: (data) => {
-      // Backend theke SSLCommerz gateway URL asbe (e.g., data.url / data.GatewayPageURL)
-      const redirectUrl = data?.url || data?.GatewayPageURL || data?.data?.url;
+      // Backend response theke GatewayPageURL ba paymentUrl dhora
+      const redirectUrl = data?.data?.paymentUrl || data?.paymentUrl || data?.GatewayPageURL || data?.data?.GatewayPageURL;
       if (redirectUrl) {
         window.location.href = redirectUrl;
       } else {
@@ -71,9 +70,9 @@ export default function CustomerPaymentsPage() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-md">
+      <div className=" text-green-500 p-6 ">
         <h1 className="text-3xl font-bold">Electricity Bill Payments 💳</h1>
-        <p className="text-sm opacity-90 mt-1">View your monthly electricity bills and securely pay online via SSLCommerz.</p>
+        <p className="text-lg opacity-90 mt-1">View your monthly electricity bills and securely pay online via SSLCommerz.</p>
       </div>
 
       {/* Bills List Section */}
@@ -131,7 +130,7 @@ export default function CustomerPaymentsPage() {
                     <button
                       onClick={() => handlePayNow(bill.id)}
                       disabled={initiatePaymentMutation.isPending}
-                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition shadow-md disabled:opacity-50 text-sm"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl transition shadow-md disabled:opacity-50 text-sm"
                     >
                       {initiatePaymentMutation.isPending ? 'Processing...' : 'Pay with SSLCommerz 🚀'}
                     </button>

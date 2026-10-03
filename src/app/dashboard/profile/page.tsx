@@ -200,34 +200,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Change Password & Forgot Password Links */}
-            <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="p-3 bg-amber-500/10 text-amber-600 rounded-2xl border border-amber-500/20">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800">Password Security</h4>
-                  <p className="text-xs text-slate-500">Update your password or recover it securely</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                <Link
-                  href="/auth/change-password"
-                  className="flex-1 sm:flex-none text-center px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition shadow-2xs"
-                >
-                  Change Password
-                </Link>
-                <Link
-                  href="/auth/forgot-password"
-                  className="flex-1 sm:flex-none text-center px-4 py-2.5 text-amber-600 hover:text-amber-700 hover:bg-amber-50 text-xs font-bold rounded-xl transition"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-            </div>
-
+       
             <div className="pt-4 flex justify-end">
               <button
                 type="submit"
