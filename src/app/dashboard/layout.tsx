@@ -45,7 +45,7 @@ const menus: Record<UserRole, MenuItem[]> = {
   ],
   TECHNICIAN: [
     { label: "Overview", href: "/dashboard/technician", icon: LayoutDashboard },
-    { label: "My Assignments", href: "/dashboard/technician/assignments", icon: ClipboardList },
+    { label: "My Assignments", href: "/dashboard/technician/my-assignments", icon: ClipboardList },
   ],
   ADMIN: [
     { label: "Overview", href: "/dashboard/admin", icon: LayoutDashboard },
