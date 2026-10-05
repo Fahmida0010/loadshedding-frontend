@@ -7,6 +7,7 @@ import {
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import Swal from 'sweetalert2';
+import Loading from '@/src/app/loading';
 
 // TypeScript Interfaces & Types
 type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
@@ -369,11 +370,8 @@ const fetchAreas = useCallback(async () => {
 
       {/* Main Content: Responsive Table / Cards */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-          </div>
-        ) : areas.length === 0 ? (
+        {loading ? <Loading/>
+         : areas.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             <AlertTriangle className="mx-auto h-12 w-12 text-gray-400 mb-3" />
             <p className="text-lg font-medium">No areas found.</p>

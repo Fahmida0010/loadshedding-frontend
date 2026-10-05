@@ -203,7 +203,7 @@ export default function AdminPaymentsPage() {
           </div>
         </div>
 
-        {/* Responsive Table / Card View with Custom Loading State */}
+        {/* Responsive Content: Card View for Small Screens, Table View for Large Screens */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
           {loading ? (
             <Loading />
@@ -213,8 +213,39 @@ export default function AdminPaymentsPage() {
             </div>
           ) : (
             <>
-              {/* Desktop & Mobile Responsive Table Container */}
-              <div className="overflow-x-auto">
+              {/* 1. Small Screen: Card Method */}
+              <div className="block md:hidden divide-y divide-slate-100">
+                {paginatedData.map((item) => (
+                  <div key={item.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-900 text-sm">{item.billNumber}</span>
+                      {renderStatusBadge(item.status)}
+                    </div>
+                    <div className="flex justify-between items-start text-xs">
+                      <div>
+                        <p className="font-medium text-slate-800">{item.user?.name || "N/A"}</p>
+                        <p className="text-slate-400">{item.user?.email || "N/A"}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-slate-900 text-sm">৳{item.amount?.toLocaleString()}</p>
+                        <p className="text-slate-500 mt-0.5">Month: {item.month}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end pt-1">
+                      <button 
+                        onClick={() => { setSelectedPayment(item); setIsModalOpen(true); }}
+                        className="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all inline-flex items-center gap-1.5 text-xs font-medium"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>View Details</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 2. Large Screen: Table Method */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-200 bg-slate-50/75 text-xs font-semibold uppercase tracking-wider text-slate-500">

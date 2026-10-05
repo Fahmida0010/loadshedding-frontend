@@ -5,6 +5,7 @@ import { useAxiosSecure } from "@/src/hooks/useAxiosSecure";
 import { useAuthStore } from "@/src/store/useAuthStore";     
 import Swal from "sweetalert2";
 import { FaExclamationTriangle, FaEdit, FaTrash, FaSearch, FaEye, FaCheckCircle } from "react-icons/fa";
+import Loading from "@/src/app/loading";
 
 interface Area {
   id: string;
@@ -270,11 +271,9 @@ export default function Outages() {
       </div>
 
       {/* Content Section: Loader / Empty / Responsive Data Display */}
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600"></div>
-        </div>
-      ) : outages.length === 0 ? (
+      {loading ?
+        <Loading/>
+       : outages.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 text-center py-16 text-gray-500">
           No unexpected outages found.
         </div>

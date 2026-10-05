@@ -178,21 +178,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Main Content Area */}
       <div className="min-w-0 flex-1 flex flex-col">
-        {/* Top Header Navbar */}
-        <header className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
-          <h1 className="text-lg font-bold text-slate-800">
-            Welcome back, <span className="text-amber-600">{user.name}</span>
-          </h1>
-          <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-slate-800 leading-tight">{user.name}</p>
-              <p className="text-xs text-slate-500 font-medium">{user.role}</p>
-            </div>
-            <div className="h-9 w-9 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow-md">
-              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-            </div>
-          </div>
-        </header>
 
         {/* Dynamic Children Content */}
         <main className="p-4 md:p-6 flex-1">{children}</main>

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAxiosSecure } from "@/src/hooks/useAxiosSecure"; 
-import { useAuthStore } from "@/src/store/useAuthStore";     
+import { useAxiosSecure } from "@/src/hooks/useAxiosSecure";
+import { useAuthStore } from "@/src/store/useAuthStore";
 import Swal from "sweetalert2";
 import { FaTasks, FaEdit, FaTrash, FaSearch, FaUserPlus } from "react-icons/fa";
+import Loading from "@/src/app/loading";
 
 interface UserInfo {
   id: string;
@@ -54,8 +55,9 @@ export default function AdminAssignments() {
 
   // Modal State for Assign / Reassign
   const [isAssignModalOpen, setIsAssignModalOpen] = useState<boolean>(false);
-  const [selectedAssignment, setSelectedAssignment] = useState<TechnicianAssignment | null>(null);
-  
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<TechnicianAssignment | null>(null);
+
   // Create / Edit Form Data
   const [formData, setFormData] = useState({
     outageId: "",
@@ -67,28 +69,35 @@ export default function AdminAssignments() {
   const fetchTechnicians = async () => {
     try {
       const response = await axiosSecure.get(`/admin/users`);
-      
+
       // Handle different possible backend response structures
       const responseData = response.data;
-      const usersArray = Array.isArray(responseData) 
-        ? responseData 
+      const usersArray = Array.isArray(responseData)
+        ? responseData
         : responseData?.data || responseData?.users || [];
-      
+
       // Filter out only technicians
-      const techList = usersArray.filter((u: UserInfo) => u.role === "TECHNICIAN");
+      const techList = usersArray.filter(
+        (u: UserInfo) => u.role === "TECHNICIAN",
+      );
       setTechnicians(techList);
     } catch (error: any) {
-      console.error("Failed to load technicians", error?.response?.data || error.message || error);
+      console.error(
+        "Failed to load technicians",
+        error?.response?.data || error.message || error,
+      );
     }
   };
 
   // Fetch Unassigned or Active Outages for assignment selection
   const fetchOutages = async () => {
     try {
-      const response = await axiosSecure.get(`/outages?status=REPORTED,CONFIRMED`);
+      const response = await axiosSecure.get(
+        `/outages?status=REPORTED,CONFIRMED`,
+      );
       const responseData = response.data;
-      const outagesArray = Array.isArray(responseData) 
-        ? responseData 
+      const outagesArray = Array.isArray(responseData)
+        ? responseData
         : responseData?.data || [];
       setOutages(outagesArray);
     } catch (error) {
@@ -109,15 +118,17 @@ export default function AdminAssignments() {
         },
       });
       const responseData = response.data;
-      const assignmentsArray = Array.isArray(responseData) 
-        ? responseData 
+      const assignmentsArray = Array.isArray(responseData)
+        ? responseData
         : responseData?.data || [];
       setAssignments(assignmentsArray);
     } catch (error: any) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: error?.response?.data?.message || "Failed to load technician assignments!",
+        text:
+          error?.response?.data?.message ||
+          "Failed to load technician assignments!",
       });
     } finally {
       setLoading(false);
@@ -175,7 +186,9 @@ export default function AdminAssignments() {
       Swal.fire({
         icon: "error",
         title: "Failed!",
-        text: error?.response?.data?.message || "Operation failed. Please try again.",
+        text:
+          error?.response?.data?.message ||
+          "Operation failed. Please try again.",
       });
     }
   };
@@ -219,7 +232,8 @@ export default function AdminAssignments() {
           Swal.fire({
             icon: "error",
             title: "Delete Failed",
-            text: error?.response?.data?.message || "Failed to delete assignment.",
+            text:
+              error?.response?.data?.message || "Failed to delete assignment.",
           });
         }
       }
@@ -229,12 +243,18 @@ export default function AdminAssignments() {
   // Badge Color Helper for Assignment Status
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case "ASSIGNED": return "bg-purple-100 text-purple-700";
-      case "ACCEPTED": return "bg-blue-100 text-blue-700";
-      case "REJECTED": return "bg-rose-100 text-rose-700";
-      case "IN_PROGRESS": return "bg-amber-100 text-amber-700";
-      case "COMPLETED": return "bg-emerald-100 text-emerald-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "ASSIGNED":
+        return "bg-purple-100 text-purple-700";
+      case "ACCEPTED":
+        return "bg-blue-100 text-blue-700";
+      case "REJECTED":
+        return "bg-rose-100 text-rose-700";
+      case "IN_PROGRESS":
+        return "bg-amber-100 text-amber-700";
+      case "COMPLETED":
+        return "bg-emerald-100 text-emerald-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -244,10 +264,12 @@ export default function AdminAssignments() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <FaTasks className="text-red-600" /> Technician Assignments Management
+            <FaTasks className="text-red-600" /> Technician Assignments
+            Management
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Assign technicians to unexpected outages and track progress in real-time.
+            Assign technicians to unexpected outages and track progress in
+            real-time.
           </p>
         </div>
         <button
@@ -272,7 +294,7 @@ export default function AdminAssignments() {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
           />
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <select
             value={statusFilter}
@@ -290,11 +312,9 @@ export default function AdminAssignments() {
       </div>
 
       {/* Content Section: Loader / Empty / Responsive Display */}
-      {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600"></div>
-        </div>
-      ) : assignments.length === 0 ? (
+      {loading ? 
+        <Loading />
+       : assignments.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 text-center py-16 text-gray-500">
           No technician assignments found.
         </div>
@@ -303,24 +323,33 @@ export default function AdminAssignments() {
           {/* Mobile & Small Screen: Card Method */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
             {assignments.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+              <div
+                key={item.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between"
+              >
                 <div>
                   <div className="flex justify-between items-start gap-2 mb-2">
                     <h3 className="font-semibold text-gray-900 text-base">
                       {item.outage?.title || "Outage Details N/A"}
                     </h3>
-                    <span className={`px-2 py-0.5 rounded text-xs font-semibold shrink-0 ${getStatusBadgeClass(item.status)}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-semibold shrink-0 ${getStatusBadgeClass(item.status)}`}
+                    >
                       {item.status}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mb-1">
-                    <span className="font-medium">Technician:</span> {item.technician?.name || "N/A"} ({item.technician?.email || ""})
+                    <span className="font-medium">Technician:</span>{" "}
+                    {item.technician?.name || "N/A"} (
+                    {item.technician?.email || ""})
                   </p>
                   <p className="text-xs text-gray-500 mb-1">
-                    <span className="font-medium">Assigned By:</span> {item.assignedBy?.name || "N/A"}
+                    <span className="font-medium">Assigned By:</span>{" "}
+                    {item.assignedBy?.name || "N/A"}
                   </p>
                   <p className="text-xs text-gray-500 mb-2 italic">
-                    <span className="font-medium">Notes:</span> {item.notes || "No notes provided"}
+                    <span className="font-medium">Notes:</span>{" "}
+                    {item.notes || "No notes provided"}
                   </p>
                   <span className="text-xs text-gray-400 block mb-2">
                     Assigned At: {new Date(item.assignedAt).toLocaleString()}
@@ -355,22 +384,37 @@ export default function AdminAssignments() {
                     <th className="py-3 px-4 font-semibold">Status</th>
                     <th className="py-3 px-4 font-semibold">Notes</th>
                     <th className="py-3 px-4 font-semibold">Assigned At</th>
-                    <th className="py-3 px-4 font-semibold text-center">Actions</th>
+                    <th className="py-3 px-4 font-semibold text-center">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                   {assignments.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50/50 transition">
+                    <tr
+                      key={item.id}
+                      className="hover:bg-gray-50/50 transition"
+                    >
                       <td className="py-3 px-4">
-                        <p className="font-medium text-gray-900">{item.outage?.title || "N/A"}</p>
-                        <span className="text-xs text-gray-400">Priority: {item.outage?.priority || "N/A"}</span>
+                        <p className="font-medium text-gray-900">
+                          {item.outage?.title || "N/A"}
+                        </p>
+                        <span className="text-xs text-gray-400">
+                          Priority: {item.outage?.priority || "N/A"}
+                        </span>
                       </td>
                       <td className="py-3 px-4 text-gray-600">
-                        <p className="font-medium">{item.technician?.name || "N/A"}</p>
-                        <p className="text-xs text-gray-400">{item.technician?.email || ""}</p>
+                        <p className="font-medium">
+                          {item.technician?.name || "N/A"}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {item.technician?.email || ""}
+                        </p>
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`px-2.5 py-1 rounded-md text-xs font-semibold ${getStatusBadgeClass(item.status)}`}>
+                        <span
+                          className={`px-2.5 py-1 rounded-md text-xs font-semibold ${getStatusBadgeClass(item.status)}`}
+                        >
                           {item.status}
                         </span>
                       </td>
@@ -411,7 +455,9 @@ export default function AdminAssignments() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
             <div className="bg-red-600 px-6 py-4 text-white flex justify-between items-center">
               <h3 className="text-lg font-semibold">
-                {selectedAssignment ? "Reassign Technician / Update" : "Assign Technician"}
+                {selectedAssignment
+                  ? "Reassign Technician / Update"
+                  : "Assign Technician"}
               </h3>
               <button
                 onClick={() => setIsAssignModalOpen(false)}
@@ -423,11 +469,15 @@ export default function AdminAssignments() {
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
               {!selectedAssignment && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Outage</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Select Outage
+                  </label>
                   <select
                     required
                     value={formData.outageId}
-                    onChange={(e) => setFormData({ ...formData, outageId: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, outageId: e.target.value })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm bg-white"
                   >
                     <option value="">Select an unexpected outage...</option>
@@ -441,11 +491,15 @@ export default function AdminAssignments() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Technician</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Technician
+                </label>
                 <select
                   required
                   value={formData.technicianId}
-                  onChange={(e) => setFormData({ ...formData, technicianId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, technicianId: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm bg-white"
                 >
                   <option value="">Select a technician...</option>
@@ -456,17 +510,23 @@ export default function AdminAssignments() {
                       </option>
                     ))
                   ) : (
-                    <option value="" disabled>No technicians found</option>
+                    <option value="" disabled>
+                      No technicians found
+                    </option>
                   )}
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes / Instructions</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Notes / Instructions
+                </label>
                 <textarea
                   rows={3}
                   value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
                   placeholder="e.g., Check transformer and feeder connection..."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
                 />
