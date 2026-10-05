@@ -3,114 +3,62 @@ import Link from "next/link";
 type HeroProps = {
   title?: string;
   description?: string;
-  stats?: {
-    label: string;
-    value: string | number;
-  }[];
 };
 
 export default function Hero({
   title = "Stay informed. Plan around power interruptions.",
-  description = "Check load shedding schedules, follow outage updates, and find the information you need for your area.",
-  stats = [],
+  description = "Check load shedding schedules, follow outage updates, and find the information you need for your area quickly and easily.",
 }: HeroProps) {
   return (
-    <section className="relative overflow-hidden bg-slate-950 text-white">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-emerald-500/15 blur-3xl"
-      />
+    <section className="relative overflow-hidden text-white py-24 lg:py-36">
+      {/* Background */}
+      <div className="absolute inset-0 -z-10 bg-slate-950">
+        <img
+          src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2000&auto=format&fit=crop"
+          alt="Power grid and electricity transmission tower"
+          className="h-full w-full object-cover object-center opacity-70"
+        />
 
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-28">
-        <div>
-          <span className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-300">
-            Power information for your community
-          </span>
+        {/* Dark overlay - lighter than before */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/75 via-slate-950/45 to-slate-950/25" />
 
-          <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            {title}
-          </h1>
+        {/* Bottom gradient for smooth section transition */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/60 to-transparent" />
+      </div>
 
-          <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-            {description}
-          </p>
+      {/* Hero Content */}
+      <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+        {/* Badge */}
+        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-300 backdrop-blur-sm">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+          Power information for your community
+        </span>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="#area-schedule"
-              className="rounded-xl bg-emerald-400 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-300"
-            >
-              Find your schedule
-            </a>
+        {/* Title */}
+        <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+          {title}
+        </h1>
 
-            <Link
-              href="/dashboard/customer/reports"
-              className="rounded-xl border border-slate-600 px-6 py-3 font-semibold transition hover:bg-slate-800"
-            >
-              Report an outage
-            </Link>
-          </div>
+        {/* Description */}
+        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-200 sm:text-xl">
+          {description}
+        </p>
 
-          {stats.length > 0 && (
-            <dl className="mt-10 flex flex-wrap gap-8 border-t border-slate-800 pt-8">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="text-sm text-slate-400">
-                    {stat.label}
-                  </dt>
-                  <dd className="mt-1 text-3xl font-bold text-emerald-300">
-                    {stat.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          )}
-        </div>
+        {/* Buttons */}
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <Link
+            href="/schedules"
+            className="rounded-xl bg-emerald-400 px-8 py-4 font-semibold text-slate-950 transition-all duration-200 hover:bg-emerald-300 hover:shadow-lg hover:shadow-emerald-400/30 active:scale-95"
+          >
+            Find your schedule
+          </Link>
 
-        <div className="rounded-3xl border border-slate-700 bg-slate-900 p-6 sm:p-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-emerald-300">
-            Plan your next step
-          </p>
-
-          <h2 className="mt-3 text-2xl font-semibold">
-            Everything starts with your area
-          </h2>
-
-          <div className="mt-8 space-y-4">
-            {[
-              {
-                number: "01",
-                title: "Find your area",
-                description: "Look up the area where you need power updates.",
-              },
-              {
-                number: "02",
-                title: "Check the schedule",
-                description: "Review planned interruption dates and times.",
-              },
-              {
-                number: "03",
-                title: "Follow repair updates",
-                description: "Check the progress of reported outages.",
-              },
-            ].map((step) => (
-              <div
-                key={step.number}
-                className="flex gap-4 rounded-2xl bg-slate-800 p-4"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 font-bold text-emerald-300">
-                  {step.number}
-                </span>
-
-                <div>
-                  <h3 className="font-semibold">{step.title}</h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-400">
-                    {step.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Link
+            href="/outages"
+            className="rounded-xl border border-white/20 bg-slate-950/50 px-8 py-4 font-semibold text-white backdrop-blur-md transition-all duration-200 hover:border-white/30 hover:bg-slate-900/70 active:scale-95"
+          >
+            Report an outage
+          </Link>
         </div>
       </div>
     </section>
