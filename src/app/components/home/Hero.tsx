@@ -28,14 +28,11 @@ export default function Hero({
 
       {/* Hero Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-        {/* Badge */}
-        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-300 backdrop-blur-sm">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-          Power information for your community
-        </span>
+       
 
         {/* Title */}
-        <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+        <h1 className="mt-6 text-2xl font-extrabold tracking-tight
+         sm:text-4xl lg:text-5xl">
           {title}
         </h1>
 

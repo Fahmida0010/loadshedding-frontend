@@ -10,8 +10,8 @@ export default function Home() {
       <main className="flex-grow">
         <Hero />
         <AreaSchedule />
-        <CurrentOutages />
         <Services />
+        <CurrentOutages />
         <FAQ />
       </main>
     </div>
