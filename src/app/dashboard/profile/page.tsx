@@ -9,38 +9,46 @@ export default function ProfilePage() {
   const { user, login } = useAuthStore();
   const axiosSecure = useAxiosSecure();
 
-  // Fix: NEXT_PUBLIC_ prefix use kora hoyeche
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
-  const getImageUrl = (imgpath: string | null | undefined) => {
+ const getImageUrl = (imgpath: string | null | undefined) => {
     if (!imgpath) return null;
     if (imgpath.startsWith('http') || imgpath.startsWith('blob:')) {
       return imgpath;
     }
-    return `${BACKEND_URL}${imgpath.startsWith('/') ? '' : '/'}${imgpath}`;
+    // Remove leading slash if BACKEND_URL ends with slash or vice versa to prevent double slash
+    const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
+    const cleanPath = imgpath.startsWith('/') ? imgpath : `/${imgpath}`;
+    
+    return `${cleanBase}${cleanPath}`;
   };
 
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.phone || user?.phoneNumber || '');
   
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    getImageUrl(user?.avatar || user?.profileImage)
-  );
+  // Safe extraction for initial image
+  // const initialImage = user?.profileImage || user?.avatar || (user as any)?.profile;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+ // Safe extraction - ekhane shobgula property properly check kora hocche
+  const currentImg = user?.profileImage || (user as any)?.avatar || (user as any)?.profile;
+  const [previewImage, setPreviewImage] = useState<string | null>(getImageUrl(currentImg));
 
   useEffect(() => {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
       setPhone(user.phone || user.phoneNumber || '');
-      setPreviewImage(getImageUrl(user.avatar || user.profileImage));
+      
+      const updatedImg = user.profileImage || (user as any)?.avatar || (user as any)?.profile;
+      console.log("User object updated, image path:", updatedImg); // Console e check korar jonno
+      setPreviewImage(getImageUrl(updatedImg));
     }
   }, [user]);
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -80,19 +88,21 @@ export default function ProfilePage() {
         setMessage({ type: 'success', text: resData.message || 'Profile updated successfully!' });
         
         const updatedUserData = resData.data || resData;
-        const finalImage = getImageUrl(updatedUserData.profileImage || updatedUserData.avatar);
+        const rawImgPath = updatedUserData.profileImage || updatedUserData.avatar;
+        const finalImage = getImageUrl(rawImgPath);
         
         // Instant preview update
         setPreviewImage(finalImage);
         setSelectedFile(null); 
         
-        // Zustand store update with correct image format
+        // FIXED: 'profile' er poriborte 'avatar' ebong 'profileImage' both dewa holo jate store thikmoto dhore rakhe
         login({
           user: updatedUserData,
           name: updatedUserData.name,
           email: updatedUserData.email,
           phone: updatedUserData.phone || updatedUserData.phoneNumber,
           avatar: finalImage,
+          profileImage: rawImgPath,
           role: updatedUserData.role,
         }, localStorage.getItem('token') || '');
       } else {
@@ -121,6 +131,8 @@ export default function ProfilePage() {
       setLoading(false);
     }
   };
+
+  {console.log("Final Preview Image URL inside JSX:", previewImage)}
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16">

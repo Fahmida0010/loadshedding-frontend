@@ -71,6 +71,7 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
             {/* Middle Side: Desktop Navigation Links */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
                 <Link href="/" className="hover:text-amber-500 transition-colors">Home</Link>
+                 <Link href="/services" className="hover:text-amber-500 transition-colors">Services</Link>
                 <Link href="/outages" className="hover:text-amber-500 transition-colors">Outages</Link>
                 <Link href="/schedules" className="hover:text-amber-500 transition-colors">Schedules</Link>
                 
@@ -216,6 +217,13 @@ export default function Navbar({ onToggleSidebar }: NavbarProps) {
                         className="text-slate-700 font-medium py-2 border-b border-slate-100"
                     >
                         Home
+                    </Link>
+                     <Link
+                        href="/services"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-slate-700 font-medium py-2 border-b border-slate-100"
+                    >
+                        Services
                     </Link>
                     <Link
                         href="/outages"

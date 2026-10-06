@@ -7,6 +7,17 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us | Load Shedding & Power Management",
+  description: "Learn more about our mission to provide accurate power interruption updates and effective load shedding management.",
+  openGraph: {
+    title: "About Us | Load Shedding & Power Management",
+    description: "Learn more about our mission and power management system.",
+    type: "website",
+  },
+};
 
 export default function AboutPage() {
   return (
