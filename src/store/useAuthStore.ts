@@ -20,6 +20,7 @@ interface AuthState {
     hasHydrated: boolean;
     login: (userData: User, token: string | null) => void;
     logout: () => void;
+    setHasHydrated: (hydrated: boolean) => void; // Ei function-ti add kora holo
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -31,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
             hasHydrated: false,
             login: (userData, token) => set({ isLoggedIn: true, user: userData, token }),
             logout: () => set({ isLoggedIn: false, user: null, token: null }),
+            setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }), // Implement kora holo
         }),
         {
             name: 'auth-storage', 

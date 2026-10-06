@@ -1,23 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
-import { Camera, Lock, Mail, User, Phone, Shield, CheckCircle2, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Camera, Mail, User, Phone, Shield, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, login } = useAuthStore();
   const axiosSecure = useAxiosSecure();
 
+  // Fix: NEXT_PUBLIC_ prefix use kora hoyeche
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
+  const getImageUrl = (imgpath: string | null | undefined) => {
+    if (!imgpath) return null;
+    if (imgpath.startsWith('http') || imgpath.startsWith('blob:')) {
+      return imgpath;
+    }
+    return `${BACKEND_URL}${imgpath.startsWith('/') ? '' : '/'}${imgpath}`;
+  };
+
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [previewImage, setPreviewImage] = useState<string | null>(user?.avatar || user?.profileImage || null);
+  const [phone, setPhone] = useState(user?.phone || user?.phoneNumber || '');
+  
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    getImageUrl(user?.avatar || user?.profileImage)
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setPhone(user.phone || user.phoneNumber || '');
+      setPreviewImage(getImageUrl(user.avatar || user.profileImage));
+    }
+  }, [user]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -34,39 +56,66 @@ export default function ProfilePage() {
 
     try {
       const formData = new FormData();
-      formData.append('userId', user?.id || '');
+      if (user?.id) formData.append('userId', user.id);
       formData.append('name', name);
       formData.append('email', email);
-      formData.append('phone', phone);
+      
+      if (phone) {
+        formData.append('phone', phone);
+      }
+
       if (selectedFile) {
         formData.append('profileImage', selectedFile);
       }
 
-      // ব্যাকএন্ড রাউট পাথ অনুযায়ী এখানে এন্ডপয়েন্ট দিন (যেমন: /profile অথবা /users/profile)
       const response = await axiosSecure.patch('/auth/me', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      const data = response.data;
+      const resData = response.data;
 
-      if (data.success) {
-        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      if (resData) {
+        setMessage({ type: 'success', text: resData.message || 'Profile updated successfully!' });
+        
+        const updatedUserData = resData.data || resData;
+        const finalImage = getImageUrl(updatedUserData.profileImage || updatedUserData.avatar);
+        
+        // Instant preview update
+        setPreviewImage(finalImage);
+        setSelectedFile(null); 
+        
+        // Zustand store update with correct image format
         login({
-          ...user,
-          name: data.user.name,
-          email: data.user.email,
-          phone: data.user.phone,
-          avatar: data.user.profileImage,
+          user: updatedUserData,
+          name: updatedUserData.name,
+          email: updatedUserData.email,
+          phone: updatedUserData.phone || updatedUserData.phoneNumber,
+          avatar: finalImage,
+          role: updatedUserData.role,
         }, localStorage.getItem('token') || '');
       } else {
-        setMessage({ type: 'error', text: data.message || 'Failed to update profile' });
+        setMessage({ type: 'error', text: 'Failed to update profile' });
       }
     } catch (err: any) {
+      console.error("Profile update error:", err);
+      
+      const responseData = err?.response?.data;
+      let errorMessage = responseData?.message || 'API endpoint not found or server error!';
+
+      if (responseData?.errorSources && Array.isArray(responseData.errorSources)) {
+        const details = responseData.errorSources
+          .map((errObj: any) => `${errObj.path}: ${errObj.message}`)
+          .join(', ');
+        errorMessage = `Validation Error: ${details}`;
+      } else if (responseData?.errorMessages) {
+        errorMessage = responseData.errorMessages.map((e: any) => e.message).join(', ');
+      }
+
       setMessage({ 
         type: 'error', 
-        text: err?.response?.data?.message || err?.message || 'API endpoint not found or server error!' 
+        text: errorMessage 
       });
     } finally {
       setLoading(false);
@@ -75,7 +124,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16">
-      {/* Electricity Related Cover Image Section */}
+      {/* Cover Image Section */}
       <div className="relative h-64 w-full bg-slate-900 overflow-hidden shadow-lg">
         <div className="absolute inset-0 opacity-30 bg-[radial-gradient(#f59e0b_1.5px,transparent_1.5px)] [background-size:20px_20px]"></div>
         <img 
@@ -99,7 +148,7 @@ export default function ProfilePage() {
             message.type === 'success' ? 'bg-emerald-500/10 text-emerald-800 border border-emerald-200' : 'bg-rose-500/10 text-rose-800 border border-rose-200'
           }`}>
             {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />}
-            {message.text}
+            <span>{message.text}</span>
           </div>
         )}
 
@@ -184,7 +233,7 @@ export default function ProfilePage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none text-slate-800 text-sm transition-all shadow-2xs"
-                    placeholder="Enter phone number"
+                    placeholder="Enter phone number (e.g., 017xxxxxxxx)"
                   />
                 </div>
               </div>
@@ -200,7 +249,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-       
             <div className="pt-4 flex justify-end">
               <button
                 type="submit"
