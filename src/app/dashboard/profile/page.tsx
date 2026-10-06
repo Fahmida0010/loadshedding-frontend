@@ -98,12 +98,12 @@ export default function ProfilePage() {
         
         // FIXED: 'profile' er poriborte 'avatar' ebong 'profileImage' both dewa holo jate store thikmoto dhore rakhe
         login({
-          user: updatedUserData,
+          ... updatedUserData,
           name: updatedUserData.name,
           email: updatedUserData.email,
-          phone: updatedUserData.phone || '',
+          phone: updatedUserData.phone ?? undefined,
           avatar: finalImage,
-          profileImage: rawImgPath,
+          profileImage:finalImage,
           role: updatedUserData.role,
         }, localStorage.getItem('token') || '');
       } else {
