@@ -10,6 +10,18 @@ import Swal from 'sweetalert2';
 type UserRole = 'ADMIN' | 'TECHNICIAN' | 'CUSTOMER';
 type UserStatus = 'ACTIVE' | 'INACTIVE' | 'BLOCKED';
 
+interface IMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+interface UsersApiResponse {
+  data: User[];
+  meta: IMeta;
+}
+
 interface User {
   id: string;
   name: string;
@@ -45,12 +57,13 @@ export default function AdminUsersPage() {
       if (roleFilter) params.role = roleFilter;
       if (statusFilter) params.status = statusFilter;
 
-      const res = await axiosSecure.get('/admin/users', { params });
-      
+      // const res = await axiosSecure.get<any>('/admin/users', { params });
+      const res = await axiosSecure.get<UsersApiResponse>('/admin/users', { params });
       setUsers(res.data || []);
       if (res.meta) {
         setTotalPages(res.meta.totalPages || 1);
       }
+
     } catch (error: any) {
       console.error('Failed to fetch users:', error);
       Swal.fire({

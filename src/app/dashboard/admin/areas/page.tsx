@@ -125,14 +125,10 @@ const fetchAreas = useCallback(async () => {
       ? apiData.data
       : [];
 
-    // Backend:
-    // meta: {
-    //   page: 1,
-    //   limit: 10,
-    //   total: 12,
-    //   totalPage: 2
-    // }
-    const metaData = apiData?.meta;
+   
+    // const metaData = apiData?.meta;
+    const metaData = (apiData?.data as any)?.meta;
+    
 
     setAreas(areaData);
 
