@@ -101,7 +101,7 @@ export default function ProfilePage() {
           user: updatedUserData,
           name: updatedUserData.name,
           email: updatedUserData.email,
-          phone: updatedUserData.phone || updatedUserData.phoneNumber,
+          phone: updatedUserData.phone || '',
           avatar: finalImage,
           profileImage: rawImgPath,
           role: updatedUserData.role,
