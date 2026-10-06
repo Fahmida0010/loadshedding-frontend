@@ -17,10 +17,6 @@ interface IMeta {
   totalPages: number;
 }
 
-interface UsersApiResponse {
-  data: User[];
-  meta: IMeta;
-}
 
 interface User {
   id: string;
@@ -32,6 +28,14 @@ interface User {
   employeeId?: string;
   createdAt: string;
 }
+
+// Custom interface for unwrapped response
+  interface ServerResponse {
+    success: boolean;
+    message: string;
+    data: User[];
+    meta: IMeta;
+  }
 
 export default function AdminUsersPage() {
   const axiosSecure = useAxiosSecure();
@@ -47,6 +51,7 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
+  
 
   // Fetch Users
   const fetchUsers = async () => {
@@ -57,11 +62,14 @@ export default function AdminUsersPage() {
       if (roleFilter) params.role = roleFilter;
       if (statusFilter) params.status = statusFilter;
 
-      // const res = await axiosSecure.get<any>('/admin/users', { params });
-      const res = await axiosSecure.get<UsersApiResponse>('/admin/users', { params });
-      setUsers(res.data || []);
-      if (res.meta) {
-        setTotalPages(res.meta.totalPages || 1);
+      // Axios call korar por response ke cast kore nilam
+      const res = await axiosSecure.get('/admin/users', { params });
+      const responseData = res as unknown as ServerResponse;
+
+      // Ekhon res.data o thik thak kaj korbe ebong meta o pawa jabe
+      setUsers(responseData.data || []);
+      if (responseData.meta) {
+        setTotalPages(responseData.meta.totalPages || 1);
       }
 
     } catch (error: any) {

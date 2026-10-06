@@ -5,6 +5,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import { Camera, Mail, User, Phone, Shield, CheckCircle2, AlertCircle } from 'lucide-react';
 
+
 export default function ProfilePage() {
   const { user, login } = useAuthStore();
   const axiosSecure = useAxiosSecure();
@@ -25,7 +26,7 @@ export default function ProfilePage() {
 
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || user?.phoneNumber || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   
   // Safe extraction for initial image
   // const initialImage = user?.profileImage || user?.avatar || (user as any)?.profile;
@@ -42,7 +43,7 @@ export default function ProfilePage() {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
-      setPhone(user.phone || user.phoneNumber || '');
+      setPhone(user.phone ||  '');
       
       const updatedImg = user.profileImage || (user as any)?.avatar || (user as any)?.profile;
       console.log("User object updated, image path:", updatedImg); // Console e check korar jonno
