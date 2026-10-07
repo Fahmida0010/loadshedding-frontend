@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import Loading from '../loading';
+import axios from 'axios';
 
 
 // Zod schema for filter validation
@@ -24,7 +25,7 @@ export default function SchedulesPage() {
   const { data: areas = [] } = useQuery({
     queryKey: ['areas-list'],
     queryFn: async () => {
-      const res = await axiosSecure.get('/areas'); // Adjust endpoint if needed
+      const res = await axios.get('/areas'); // Adjust endpoint if needed
       return res.data;
     },
   });
@@ -33,7 +34,7 @@ export default function SchedulesPage() {
   const { data: schedules = [], isLoading, error: queryError } = useQuery({
     queryKey: ['schedules', statusFilter, areaFilter],
     queryFn: async () => {
-      const res = await axiosSecure.get('/schedules', {
+      const res = await axios.get('/schedules', {
         params: { 
           status: statusFilter,
           areaId: areaFilter,

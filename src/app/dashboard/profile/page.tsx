@@ -39,17 +39,19 @@ export default function ProfilePage() {
   const currentImg = user?.profileImage || (user as any)?.avatar || (user as any)?.profile;
   const [previewImage, setPreviewImage] = useState<string | null>(getImageUrl(currentImg));
 
-  useEffect(() => {
+ useEffect(() => {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
-      setPhone(user.phone ||  '');
+      setPhone(user.phone || '');
       
       const updatedImg = user.profileImage || (user as any)?.avatar || (user as any)?.profile;
-      console.log("User object updated, image path:", updatedImg); // Console e check korar jonno
-      setPreviewImage(getImageUrl(updatedImg));
+      if (updatedImg && !selectedFile) { // selectedFile না থাকলে কেবল স্টোর থেকে আপডেট করবে
+        setPreviewImage(getImageUrl(updatedImg));
+      }
     }
-  }, [user]);
+  }, [user, selectedFile]);
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -93,8 +95,9 @@ export default function ProfilePage() {
         const finalImage = getImageUrl(rawImgPath);
         
         // Instant preview update
+         setSelectedFile(null); 
         setPreviewImage(finalImage);
-        setSelectedFile(null); 
+       
         
         // FIXED: 'profile' er poriborte 'avatar' ebong 'profileImage' both dewa holo jate store thikmoto dhore rakhe
         login({

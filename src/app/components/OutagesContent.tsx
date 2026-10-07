@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import { useAuthStore } from '@/src/store/useAuthStore';
 import Loading from '../loading';
+import axios from 'axios';
 
 
 export default function Outages() {
@@ -24,7 +25,7 @@ export default function Outages() {
   const { data: areas = [] } = useQuery({
     queryKey: ['areas'],
     queryFn: async () => {
-      const res = await axiosSecure.get('/areas');
+      const res = await axios.get('/areas');
       return res.data?.data || res.data;
     },
   });
@@ -33,7 +34,7 @@ export default function Outages() {
   const { data: outages = [], isLoading } = useQuery({
     queryKey: ['outages'],
     queryFn: async () => {
-      const res = await axiosSecure.get('/outages');
+      const res = await axios.get('/outages');
       return res.data;
     },
   });
