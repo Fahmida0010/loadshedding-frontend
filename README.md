@@ -49,14 +49,16 @@ A full-stack enterprise-grade web application designed to track, manage, and opt
 
 ### 👥 Role-Based Dashboards
 * **Admin Dashboard:** 
-  * Comprehensive management of **Substations**, **Feeders**, and **Distribution Zones**.
+ * Overview of activities
+  * Comprehensive management of **Substations**, **Feeders**, **Distribution Zones**.**Areas**,**Assignments**, **Payment History**, **Users**, **Outages**, **Schedules**
   * Complete user management and role assignments.
   * System-wide analytics powered by **Recharts**.
 * **Technician Dashboard:** 
+  * Overview of activities
   * Task and technician assignments for grid repairs.
   * Real-time status updates on outage resolution.
 * **Customer Dashboard:** 
-  * Interactive zone-based schedule checking.
+ * Overview of activities
   * Outage reporting system with tracking.
   * Profile and settings management.
 

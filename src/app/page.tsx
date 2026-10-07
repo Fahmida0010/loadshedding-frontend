@@ -1,9 +1,10 @@
 import Hero from "./components/home/Hero";
 import AreaSchedule from "./components/home/AreaSchedule";
-import Services from "./components/home/Services";
+import LiveOutageMap from "./components/home/live/LiveOutageMap";
 import FAQ from "./components/home/FAQ";
 import { Metadata } from "next";
-
+import EnergyTips from "./components/home/EnergyTips";
+import Testimonials from "./components/home/Testimonials";
 
 export const metadata: Metadata = {
   title: "Home | Load Shedding & Power Management",
@@ -20,7 +21,9 @@ export default function Home() {
       <main className="flex-grow">
         <Hero />
         <AreaSchedule />
-        <Services />
+        <LiveOutageMap />
+        <EnergyTips/>
+        <Testimonials/>
         <FAQ />
       </main>
     </div>
