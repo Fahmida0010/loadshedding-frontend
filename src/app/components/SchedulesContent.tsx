@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useAuthStore } from '@/src/store/useAuthStore';
-import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import Loading from '../loading';
 import axios from 'axios';
 
@@ -19,13 +18,13 @@ export default function SchedulesPage() {
   const { user } = useAuthStore();
   const [statusFilter, setStatusFilter] = useState('');
   const [areaFilter, setAreaFilter] = useState('');
-  const axiosSecure = useAxiosSecure(); // Axios instance with auth token
+  
 
   // Fetch areas for the dropdown filter
   const { data: areas = [] } = useQuery({
     queryKey: ['areas-list'],
     queryFn: async () => {
-      const res = await axios.get('/areas'); // Adjust endpoint if needed
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/areas`);
       return res.data;
     },
   });
@@ -34,7 +33,7 @@ export default function SchedulesPage() {
   const { data: schedules = [], isLoading, error: queryError } = useQuery({
     queryKey: ['schedules', statusFilter, areaFilter],
     queryFn: async () => {
-      const res = await axios.get('/schedules', {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/schedules`, {
         params: { 
           status: statusFilter,
           areaId: areaFilter,

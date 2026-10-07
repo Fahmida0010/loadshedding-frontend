@@ -25,7 +25,7 @@ export default function Outages() {
   const { data: areas = [] } = useQuery({
     queryKey: ['areas'],
     queryFn: async () => {
-      const res = await axios.get('/areas');
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/areas`);
       return res.data?.data || res.data;
     },
   });
@@ -34,7 +34,7 @@ export default function Outages() {
   const { data: outages = [], isLoading } = useQuery({
     queryKey: ['outages'],
     queryFn: async () => {
-      const res = await axios.get('/outages');
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/outages`);
       return res.data;
     },
   });
