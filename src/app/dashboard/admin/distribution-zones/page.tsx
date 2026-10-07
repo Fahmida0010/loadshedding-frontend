@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAxiosSecure } from "@/src/hooks/useAxiosSecure"; // Apnar project er path onujayi thik kore neben
-import { useAuthStore } from "@/src/store/useAuthStore";     // Apnar project er path onujayi thik kore neben
+import { useAxiosSecure } from "@/src/hooks/useAxiosSecure"; 
+import { useAuthStore } from "@/src/store/useAuthStore";     
 import Swal from "sweetalert2";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaWarehouse } from "react-icons/fa";
+import Loading from "@/src/app/loading";
 
 interface DistributionZone {
   id: string;
@@ -184,9 +185,7 @@ export default function AdminDistributionZones() {
 
       {/* Content Section: Loader / Empty / Responsive Data Display */}
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-        </div>
+      <Loading/>
       ) : zones.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 text-center py-16 text-gray-500">
           No distribution zones found.
