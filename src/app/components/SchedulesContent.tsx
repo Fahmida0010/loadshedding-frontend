@@ -7,7 +7,6 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 import Loading from '../loading';
 import axios from 'axios';
 
-
 // Zod schema for filter validation
 const scheduleFilterSchema = z.object({
   status: z.string().optional(),
@@ -18,14 +17,13 @@ export default function SchedulesPage() {
   const { user } = useAuthStore();
   const [statusFilter, setStatusFilter] = useState('');
   const [areaFilter, setAreaFilter] = useState('');
-  
 
-  // Fetch areas for the dropdown filter
+  // Fetch areas for the dropdown filter (Fixed with safe fallback array)
   const { data: areas = [] } = useQuery({
     queryKey: ['areas-list'],
     queryFn: async () => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/areas`);
-      return res.data;
+      return res.data?.data || res.data?.areas || res.data || [];
     },
   });
 
@@ -39,7 +37,7 @@ export default function SchedulesPage() {
           areaId: areaFilter,
         },
       });
-      return res.data;
+      return res.data?.data || res.data?.schedules || res.data || [];
     },
   });
 
@@ -90,7 +88,7 @@ export default function SchedulesPage() {
           className="px-4 py-2 border border-gray-200 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
         >
           <option value="">All Areas</option>
-          {areas.map((area: any) => (
+          {Array.isArray(areas) && areas.map((area: any) => (
             <option key={area.id} value={area.id}>
               {area.name} {area.code ? `(${area.code})` : ''}
             </option>
@@ -111,7 +109,7 @@ export default function SchedulesPage() {
       </div>
 
       {/* Schedules List Grid */}
-      {schedules.length === 0 ? (
+      {!Array.isArray(schedules) || schedules.length === 0 ? (
         <div className="bg-white p-12 text-center rounded-2xl border border-gray-100 shadow-sm">
           <p className="text-gray-500 text-sm">No schedules found matching your criteria.</p>
         </div>

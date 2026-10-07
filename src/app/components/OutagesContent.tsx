@@ -30,12 +30,13 @@ export default function Outages() {
     },
   });
 
-  // Fetch Outages using TanStack Query
+// Fetch Outages using TanStack Query
   const { data: outages = [], isLoading } = useQuery({
     queryKey: ['outages'],
     queryFn: async () => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/outages`);
-      return res.data;
+      // Ekhane check korbe data kothay ache (res.data.data ba direct res.data)
+      return res.data?.data || res.data?.outages || res.data || [];
     },
   });
 
@@ -178,31 +179,35 @@ export default function Outages() {
         </div>
       )}
 
-      {/* Outages List Section */}
+   {/* Outages List Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-gray-800">Active Outage Reports</h2>
         <div className="grid md:grid-cols-2 gap-6">
-          {outages.map((item: any) => (
-            <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition space-y-4 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex justify-between items-start gap-2">
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-100">
-                    📍 {item.area?.name || item.Area?.name || 'Specified Area'} {item.area?.zone ? `(${item.area.zone})` : ''}
-                  </span>
-                  <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-semibold uppercase tracking-wide">
-                    {item.status}
-                  </span>
+          {Array.isArray(outages) && outages.length > 0 ? (
+            outages.map((item: any) => (
+              <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-100">
+                      📍 {item.area?.name || item.Area?.name || 'Specified Area'} {item.area?.zone ? `(${item.area.zone})` : ''}
+                    </span>
+                    <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-semibold uppercase tracking-wide">
+                      {item.status}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-xl text-gray-900">{item.title}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">{item.description || 'No additional details provided.'}</p>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{item.description || 'No additional details provided.'}</p>
-              </div>
 
-              <div className="text-xs text-gray-500 pt-3 border-t flex justify-between items-center">
-                <span className="font-medium text-gray-700">Priority: <span className="font-bold text-red-600">{item.priority}</span></span>
-                <span>{new Date(item.reportedAt).toLocaleString()}</span>
+                <div className="text-xs text-gray-500 pt-3 border-t flex justify-between items-center">
+                  <span className="font-medium text-gray-700">Priority: <span className="font-bold text-red-600">{item.priority}</span></span>
+                  <span>{new Date(item.reportedAt).toLocaleString()}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500 col-span-2">No active outage reports found.</p>
+          )}
         </div>
       </div>
     </div>
