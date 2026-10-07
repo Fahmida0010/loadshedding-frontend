@@ -12,12 +12,15 @@ export default function ProfilePage() {
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
- const getImageUrl = (imgpath: string | null | undefined) => {
+  const getImageUrl = (imgpath: string | null | undefined) => {
     if (!imgpath) return null;
-    if (imgpath.startsWith('http') || imgpath.startsWith('blob:')) {
+    
+    // Jodi URL-ta already 'http', 'https' ba 'blob:' diye shuru hoy (Cloudinary URL ba local preview), tabe seta direct return korbe
+    if (imgpath.startsWith('http') || imgpath.startsWith('blob:') || imgpath.startsWith('https://res.cloudinary.com')) {
       return imgpath;
     }
-    // Remove leading slash if BACKEND_URL ends with slash or vice versa to prevent double slash
+    
+    // Jodi database-e puraton kono relative path thake (e.g. /uploads/...), tokhon BACKEND_URL add korbe
     const cleanBase = BACKEND_URL.endsWith('/') ? BACKEND_URL.slice(0, -1) : BACKEND_URL;
     const cleanPath = imgpath.startsWith('/') ? imgpath : `/${imgpath}`;
     
