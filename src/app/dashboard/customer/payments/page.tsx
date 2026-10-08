@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
@@ -10,6 +11,9 @@ export default function CustomerPaymentsPage() {
   const { token } = useAuthStore();
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
+
+  // Specific bill tracking state
+  const [processingBillId, setProcessingBillId] = useState<string | null>(null);
 
   // Fetch Customer Bills
   const { data: bills = [], isLoading } = useQuery({
@@ -31,7 +35,6 @@ export default function CustomerPaymentsPage() {
       return res.data;
     },
     onSuccess: (data) => {
-      // Backend response theke GatewayPageURL ba paymentUrl dhora
       const redirectUrl = data?.data?.paymentUrl || data?.paymentUrl || data?.GatewayPageURL || data?.data?.GatewayPageURL;
       if (redirectUrl) {
         window.location.href = redirectUrl;
@@ -51,6 +54,10 @@ export default function CustomerPaymentsPage() {
         text: errorMsg,
       });
     },
+    onSettled: (_, __, billId) => {
+      // Clear processing state for this specific bill when done
+      setProcessingBillId(null);
+    },
   });
 
   const handlePayNow = (billId: string) => {
@@ -62,6 +69,7 @@ export default function CustomerPaymentsPage() {
       });
       return;
     }
+    setProcessingBillId(billId);
     initiatePaymentMutation.mutate(billId);
   };
 
@@ -70,7 +78,7 @@ export default function CustomerPaymentsPage() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Page Header */}
-      <div className=" text-green-500 p-6 ">
+      <div className="text-green-500 p-6">
         <h1 className="text-3xl font-bold">Electricity Bill Payments 💳</h1>
         <p className="text-lg opacity-90 mt-1">View your monthly electricity bills and securely pay online via SSLCommerz.</p>
       </div>
@@ -129,10 +137,10 @@ export default function CustomerPaymentsPage() {
                   ) : (
                     <button
                       onClick={() => handlePayNow(bill.id)}
-                      disabled={initiatePaymentMutation.isPending}
+                      disabled={processingBillId === bill.id}
                       className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl transition shadow-md disabled:opacity-50 text-sm"
                     >
-                      {initiatePaymentMutation.isPending ? 'Processing...' : 'Pay with SSLCommerz 🚀'}
+                      {processingBillId === bill.id ? 'Processing...' : 'Pay with SSLCommerz 🚀'}
                     </button>
                   )}
                 </div>
