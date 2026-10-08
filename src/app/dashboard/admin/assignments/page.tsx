@@ -68,7 +68,7 @@ export default function AdminAssignments() {
   // Fetch Technicians using the route: GET /users (filtering TECHNICIAN on client-side safely)
   const fetchTechnicians = async () => {
     try {
-      const response = await axiosSecure.get(`/admin/users`);
+      const response = await axiosSecure.get(`/admin/users?limit=1000`);
 
       // Handle different possible backend response structures
       const responseData = response.data;
@@ -93,7 +93,7 @@ export default function AdminAssignments() {
   const fetchOutages = async () => {
     try {
       const response = await axiosSecure.get(
-        `/outages?status=REPORTED,CONFIRMED`,
+        `/outages`,
       );
       const responseData = response.data;
       const outagesArray = Array.isArray(responseData)
