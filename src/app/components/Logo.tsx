@@ -54,13 +54,13 @@ export default function Logo({
 					className={`${currentSize.title} font-bold tracking-tight leading-none`}
 				>
 					<span className="text-amber-400">Load</span>
-					<span className="text-green-500">Shedding</span>
+					<span className="text-green-500">Shedding </span>
 				</span>
 
 				<span
-					className={`${currentSize.subtitle} mt-1 font-medium uppercase tracking-[0.20em] text-gray-400`}
+					className={`${currentSize.subtitle} mt-1 font-medium uppercase tracking-[0.20em] text-gray-500`}
 				>
-					Power Management
+					& Power Management
 				</span>
 			</div>
 		</Link>

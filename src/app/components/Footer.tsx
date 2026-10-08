@@ -57,26 +57,18 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter / Emergency Alert Update */}
+       {/* Support Info & Demo Contact */}
           <div>
-            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Stay Updated</h4>
-            <p className="text-sm text-gray-400 mb-4">Subscribe for emergency outage alerts and latest schedules.</p>
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col space-y-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
-                required
-              />
-              <button
-                type="submit"
-                className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium py-2 rounded transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Support & Contact</h4>
+            <div className="space-y-1 text-sm text-gray-300">
+              <p>
+                <span className="font-medium text-white">Email:</span> support@loadshedding.com
+              </p>
+              <p>
+                <span className="font-medium text-white">Helpline:</span> +880 1700-000000
+              </p>
+            </div>
           </div>
-
         </div>
 
         {/* Bottom Bar with Real-colored Social Icons & Gray Hover */}
@@ -87,7 +79,7 @@ export default function Footer() {
           <div className="flex items-center space-x-5 mt-4 sm:mt-0">
             {/* GitHub */}
             <a 
-              href="https://github.com" 
+              href="https://github.com/Fahmida0010" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-white hover:text-gray-400 transition-colors"
@@ -100,7 +92,7 @@ export default function Footer() {
 
             {/* Facebook */}
             <a 
-              href="https://facebook.com" 
+              href="https://www.facebook.com/nihsanga.cetana" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-[#1877F2] hover:text-gray-400 transition-colors"
@@ -113,7 +105,7 @@ export default function Footer() {
 
             {/* LinkedIn */}
             <a 
-              href="https://linkedin.com" 
+              href="https://www.linkedin.com/in/fahmida-akter-tanjina/" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-[#0A66C2] hover:text-gray-400 transition-colors"
@@ -126,7 +118,7 @@ export default function Footer() {
 
             {/* YouTube */}
             <a 
-              href="https://youtube.com" 
+              href="https://www.youtube.com/@ciencefiction" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-[#e91111] hover:text-gray-400
