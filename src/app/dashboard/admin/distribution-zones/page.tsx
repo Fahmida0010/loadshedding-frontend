@@ -37,25 +37,42 @@ export default function AdminDistributionZones() {
     description: "",
   });
 
-  // Fetch Distribution Zones
-  const fetchZones = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosSecure.get(`/distribution-zones`, {
-        params: { searchTerm, page, limit },
-      });
-      setZones(response.data?.data || response.data || []);
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: error?.response?.data?.message || "Failed to load distribution zones!",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchZones = async () => {
+  try {
+    setLoading(true);
 
+    const response = await axiosSecure.get("/distribution-zones", {
+      params: {
+        searchTerm: searchTerm.trim(),
+        page,
+        limit,
+      },
+    });
+
+    const responseData = response.data;
+
+    // Actual zones array is response.data.data.data
+    const zoneData = Array.isArray(responseData?.data?.data)
+      ? responseData.data.data
+      : [];
+
+    setZones(zoneData);
+  } catch (error: any) {
+    console.error("Failed to fetch distribution zones:", error);
+
+    setZones([]);
+
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text:
+        error?.response?.data?.message ||
+        "Failed to load distribution zones!",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => {
     fetchZones();
   }, [searchTerm, page, limit]);

@@ -52,31 +52,71 @@ const Substations = () => {
   const [selectedZone, setSelectedZone] = useState<string>('');
 
   // Fetch Substations
-  const fetchSubstations = async () => {
-    try {
-      setLoading(true);
-      let query = `/substations?`;
-      if (searchTerm) query += `searchTerm=${encodeURIComponent(searchTerm)}&`;
-      if (selectedZone) query += `zoneId=${selectedZone}&`;
+const fetchSubstations = async () => {
+  try {
+    setLoading(true);
 
-      const res = await axiosSecure.get(query);
-      setSubstations(res.data.data || res.data);
-    } catch (error: any) {
-      console.error('Error fetching substations:', error);
-    } finally {
-      setLoading(false);
+    const params: Record<string, string> = {
+      page: "1",
+      limit: "10",
+    };
+
+    if (searchTerm.trim()) {
+      params.searchTerm = searchTerm.trim();
     }
-  };
+
+    if (selectedZone) {
+      params.zoneId = selectedZone;
+    }
+
+    const res = await axiosSecure.get("/substations", {
+      params,
+    });
+
+    const responseData = res.data;
+
+    // Backend response অনুযায়ী actual substations array
+    const substationData = Array.isArray(responseData?.data)
+      ? responseData.data
+      : [];
+
+    setSubstations(substationData);
+  } catch (error: any) {
+    console.error("Error fetching substations:", error);
+
+    setSubstations([]);
+
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text:
+        error?.response?.data?.message ||
+        "Failed to load substations!",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Fetch Zones
-  const fetchZones = async () => {
-    try {
-      const res = await axiosSecure.get('/distribution-zones');
-      setZones(res.data.data || res.data);
-    } catch (error: any) {
-      console.error('Error fetching zones:', error);
-    }
-  };
+const fetchZones = async () => {
+  try {
+    const res = await axiosSecure.get("/distribution-zones");
+
+    const responseData = res.data;
+
+    // Actual zones array:
+    // responseData.data.data
+    const zoneData = Array.isArray(responseData?.data?.data)
+      ? responseData.data.data
+      : [];
+
+    setZones(zoneData);
+  } catch (error: any) {
+    console.error("Error fetching zones:", error);
+    setZones([]);
+  }
+};
 
   useEffect(() => {
     fetchSubstations();

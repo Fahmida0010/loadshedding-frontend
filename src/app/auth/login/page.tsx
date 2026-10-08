@@ -57,7 +57,7 @@ export default function LoginPage() {
     setError(null);
 
     const demoCredentials = {
-      ADMIN: { email: 'admin@demo.com', password: 'Password248', name: 'Ashraf Aman' },
+      ADMIN: { email: 'admin@demo.com', password: 'Password369', name: 'Ashraf Aman' },
       TECHNICIAN: { email: 'technician@demo.com', password: 'Password456', name: 'Sarbuland khan' },
       CUSTOMER: { email: 'customer@demo.com', password: 'Password789', name: 'Zarmala Akter' },
     };

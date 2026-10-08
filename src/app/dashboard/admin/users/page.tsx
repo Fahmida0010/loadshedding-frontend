@@ -52,37 +52,49 @@ export default function AdminUsersPage() {
   const [limit, setLimit] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
   
+const fetchUsers = async () => {
+  try {
+    setLoading(true);
 
-  // Fetch Users
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const params: Record<string, any> = { page, limit };
-      if (search) params.search = search;
-      if (roleFilter) params.role = roleFilter;
-      if (statusFilter) params.status = statusFilter;
+    const params: Record<string, any> = {
+      page,
+      limit,
+    };
 
-      // Axios call korar por response ke cast kore nilam
-      const res = await axiosSecure.get('/admin/users', { params });
-      const responseData = res as unknown as ServerResponse;
+    if (search.trim()) params.search = search.trim();
+    if (roleFilter) params.role = roleFilter;
+    if (statusFilter) params.status = statusFilter;
 
-      // Ekhon res.data o thik thak kaj korbe ebong meta o pawa jabe
-      setUsers(responseData.data || []);
-      if (responseData.meta) {
-        setTotalPages(responseData.meta.totalPages || 1);
-      }
+    const res = await axiosSecure.get('/admin/users', { params });
 
-    } catch (error: any) {
-      console.error('Failed to fetch users:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: error.response?.data?.message || 'Failed to load users',
-      });
-    } finally {
-      setLoading(false);
+    // Axios response থেকে backend response বের করছি
+    const responseData = res.data as ServerResponse;
+
+    // Backend-er data = users array
+    setUsers(Array.isArray(responseData.data) ? responseData.data : []);
+
+    // Pagination metadata
+    if (responseData.meta) {
+      setTotalPages(responseData.meta.totalPages || 1);
+    } else {
+      setTotalPages(1);
     }
-  };
+
+  } catch (error: any) {
+    console.error('Failed to fetch users:', error);
+
+    setUsers([]);
+    setTotalPages(1);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: error.response?.data?.message || 'Failed to load users',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchUsers();
