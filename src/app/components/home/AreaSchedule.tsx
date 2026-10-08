@@ -2,24 +2,23 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/src/store/useAuthStore';
-import { useAxiosSecure } from '@/src/hooks/useAxiosSecure';
 import Loading from '../../loading';
-
+import axios from 'axios';
 
 export default function AreaScheduleSection() {
   const { user } = useAuthStore();
-  const axiosSecure = useAxiosSecure(); // Axios instance with auth token
 
   // Fetch only ACTIVE schedules without any filter UI
   const { data: schedules = [], isLoading, error: queryError } = useQuery({
     queryKey: ['schedules', 'ACTIVE'],
     queryFn: async () => {
-      const res = await axiosSecure.get('/schedules', {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/schedules`, {
         params: { 
           status: 'ACTIVE',
         },
       });
-      return res.data;
+      // ব্যাকএন্ডের রেসপন্স ফরম্যাট অনুযায়ী সঠিক অ্যারেটি এক্সট্রাক্ট করা
+      return res?.data?.data || res?.data || [];
     },
   });
 
@@ -33,6 +32,9 @@ export default function AreaScheduleSection() {
       </div>
     );
   }
+
+  // শিডিউলগুলো অ্যারে কি না তা নিশ্চিত করার জন্য সেফ চেক
+  const scheduleList = Array.isArray(schedules) ? schedules : [];
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -49,13 +51,13 @@ export default function AreaScheduleSection() {
       </div>
 
       {/* Schedules List Grid */}
-      {schedules.length === 0 ? (
+      {scheduleList.length === 0 ? (
         <div className="bg-white p-10 text-center rounded-2xl border border-gray-100 shadow-sm">
           <p className="text-gray-500 text-sm">No active power disruption schedules right now.</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-5">
-          {schedules.map((item: any) => (
+          {scheduleList.map((item: any) => (
             <div 
               key={item.id} 
               className="bg-white p-6 rounded-2xl shadow-sm border border-red-100 hover:shadow-md transition-all space-y-4 flex flex-col justify-between relative overflow-hidden"

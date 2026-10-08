@@ -91,74 +91,72 @@ export default function AreaManagementPage() {
       console.error('Failed to fetch feeders:', err);
     }
   }, [axiosSecure]);
-const fetchAreas = useCallback(async () => {
-  try {
-    setLoading(true);
-    setError(null);
 
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
+  const fetchAreas = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    if (searchTerm.trim()) {
-      params.append('searchTerm', searchTerm.trim());
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+
+      if (searchTerm.trim()) {
+        params.append('searchTerm', searchTerm.trim());
+      }
+
+      if (selectedPriority) {
+        params.append('priority', selectedPriority);
+      }
+
+      if (selectedFeederFilter) {
+        params.append('feederId', selectedFeederFilter);
+      }
+
+      const response = await axiosSecure.get(
+        `/areas?${params.toString()}`
+      );
+
+      const apiData = response;
+
+      // Extract area data safely
+      const areaData = Array.isArray(apiData?.data)
+        ? apiData.data
+        : Array.isArray((apiData as any)?.data?.data)
+        ? (apiData as any).data.data
+        : [];
+
+      // Extract metadata safely for total pages
+      const metaData = apiData?.meta || (apiData?.data as any)?.meta;
+
+      setAreas(areaData);
+      setTotalPages(
+        Number(metaData?.totalPage || metaData?.totalPages) || 1
+      );
+
+    } catch (err: any) {
+      console.error('Failed to fetch areas:', err);
+
+      setAreas([]);
+      setTotalPages(1);
+
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to load areas data.'
+      );
+    } finally {
+      setLoading(false);
     }
-
-    if (selectedPriority) {
-      params.append('priority', selectedPriority);
-    }
-
-    if (selectedFeederFilter) {
-      params.append('feederId', selectedFeederFilter);
-    }
-
-    const response = await axiosSecure.get(
-      `/areas?${params.toString()}`
-    );
-
-    // axiosSecure already returns the API response body
-    const apiData = response;
-
-    // Keep the existing area data exactly as it is
-    const areaData = Array.isArray(apiData?.data)
-      ? apiData.data
-      : [];
-
-   
-    // const metaData = apiData?.meta;
-    const metaData = (apiData?.data as any)?.meta;
-    
-
-    setAreas(areaData);
-
-    // Only pagination value is being fixed
-    setTotalPages(
-      Number(metaData?.totalPage) || 1
-    );
-
-  } catch (err: any) {
-    console.error('Failed to fetch areas:', err);
-
-    setAreas([]);
-    setTotalPages(1);
-
-    setError(
-      err?.response?.data?.message ||
-      err?.message ||
-      'Failed to load areas data.'
-    );
-  } finally {
-    setLoading(false);
-  }
-}, [
-  axiosSecure,
-  page,
-  limit,
-  searchTerm,
-  selectedPriority,
-  selectedFeederFilter,
-]);
+  }, [
+    axiosSecure,
+    page,
+    limit,
+    searchTerm,
+    selectedPriority,
+    selectedFeederFilter,
+  ]);
 
   useEffect(() => {
     fetchFeeders();
@@ -366,8 +364,7 @@ const fetchAreas = useCallback(async () => {
 
       {/* Main Content: Responsive Table / Cards */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {loading ? <Loading/>
-         : areas.length === 0 ? (
+        {loading ? <Loading/> : areas.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             <AlertTriangle className="mx-auto h-12 w-12 text-gray-400 mb-3" />
             <p className="text-lg font-medium">No areas found.</p>
@@ -399,9 +396,11 @@ const fetchAreas = useCallback(async () => {
                         <div className="text-gray-900">{area.feeder?.name || 'N/A'}</div>
                         <div className="text-xs text-gray-500 font-mono">{area.feeder?.code}</div>
                       </td>
-                      <td className="py-3 px-4 flex items-center gap-1.5 pt-4">
-                        <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
-                        <span className="truncate max-w-xs">{area.location || 'N/A'}</span>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                          <span className="truncate max-w-xs">{area.location || 'N/A'}</span>
+                        </div>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-1.5">
@@ -478,35 +477,35 @@ const fetchAreas = useCallback(async () => {
               ))}
             </div>
 
-          {/* Pagination Controls */}
-<div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm">
-  <span className="text-gray-600">
-    Page <strong>{page}</strong> of{" "}
-    <strong>{totalPages}</strong>
-  </span>
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm">
+              <span className="text-gray-600">
+                Page <strong>{page}</strong> of{" "}
+                <strong>{totalPages}</strong>
+              </span>
 
-  <div className="flex gap-2">
-    <button
-      type="button"
-      onClick={() => setPage((p) => Math.max(p - 1, 1))}
-      disabled={page <= 1 || loading}
-      className="px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition flex items-center gap-1"
-    >
-      <ChevronLeft className="w-4 h-4" />
-      Prev
-    </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page <= 1 || loading}
+                  className="px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition flex items-center gap-1"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Prev
+                </button>
 
-    <button
-      type="button"
-      onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-      disabled={page >= totalPages || loading}
-      className="px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition flex items-center gap-1"
-    >
-      Next
-      <ChevronRight className="w-4 h-4" />
-    </button>
-  </div>
-</div>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={page >= totalPages || loading}
+                  className="px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition flex items-center gap-1"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </>
         )}
       </div>
