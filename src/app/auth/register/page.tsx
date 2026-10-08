@@ -32,47 +32,43 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
-  try {
-  const res: any = await axiosSecure.post('/auth/register', formData);
-  
-  // ব্যাকএন্ডের রেসপন্স স্ট্রাকচার অনুযায়ী accessToken এভাবে ধরতে হবে:
-  const token = res?.accessToken || res?.data?.accessToken || res?.token;
-  
-  if (token) {
-    localStorage.setItem('token', token);
-  }
+    try {
+      const res: any = await axiosSecure.post('/auth/register', formData);
+      console.log('Full Register Response:', res);
 
-  // User data extract kora
-  const responseUser = res?.user || res?.data?.user || {
-    name: formData.name,
-    email: formData.email,
-    role: formData.role,
-  };
+      // ব্যাকএন্ড রেসপন্সের নেস্টেড স্ট্রাকচার অনুযায়ী সঠিক পাথ:
+      const token = res?.data?.data?.accessToken || res?.data?.accessToken || res?.accessToken;
+      const responseUser = res?.data?.data?.user || res?.data?.user || res?.user;
 
-  // Zustand store e user & token save kora
-  login(responseUser, token);
+      if (token) {
+        localStorage.setItem('token', token);
+        console.log('Token successfully saved:', token);
+      } else {
+        console.error('CRITICAL: Token field is still missing!', res);
+      }
 
-  // Role onusare sothik dashboard e redirect kora
-  const role = responseUser.role;
-  if (role === 'ADMIN') {
-    router.push('/dashboard/admin');
-  } else if (role === 'TECHNICIAN') {
-    router.push('/dashboard/technician');
-  } else {
-    router.push('/dashboard/customer');
-  }   
-   
+      // Zustand store-এ লগইন স্টেট আপডেট করা
+      login(responseUser, token);
+
+      // রোল অনুযায়ী ড্যাশবোর্ডে রিডাইরেক্ট করা
+      const role = responseUser?.role || formData.role;
+      if (role === 'ADMIN') {
+        router.push('/dashboard/admin');
+      } else if (role === 'TECHNICIAN') {
+        router.push('/dashboard/technician');
+      } else {
+        router.push('/dashboard/customer');
+      }  
+    
     } catch (err: any) {
       console.log('Register Error:', err);
 
-      // Zod errorSources ba direct message dhorar jonno
       if (err?.errorSources && Array.isArray(err?.errorSources) && err.errorSources.length > 0) {
         const errorMessages = err.errorSources
           .map((item: any) => item.message)
           .join(' • ');
         setError(errorMessages);
       } else {
-        // Same email ba onnanno message ekhane catch korbe
         setError(err?.message || err?.response?.data?.message || 'Registration failed. Please try again.');
       }
     } finally {

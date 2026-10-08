@@ -25,26 +25,27 @@ export default function LoginPage() {
 
     try {
       const res: any = await axiosSecure.post('/auth/login', { email, password });
-      const token = res?.accessToken || res?.data?.accessToken;
+      
+      // ব্যাকএন্ডের নেস্টেড স্ট্রাকচার অনুযায়ী টোকেন এবং ইউজার ডেটা বের করা
+      const token = res?.data?.data?.accessToken || res?.data?.accessToken || res?.accessToken;
+      const userObj = res?.data?.data?.user || res?.data?.user || res?.user;
+
       if (token) {
-        localStorage.setItem('token',token);
+        localStorage.setItem('token', token);
       }
 
-  
-const responseData = res?.data || res; 
+      const userData = {
+        name: userObj?.name || email.split('@')[0],
+        email: userObj?.email || email,
+        role: userObj?.role || 'CUSTOMER',
+        avatar: userObj?.profileImage || userObj?.name?.charAt(0).toUpperCase() || 'A',
+      };
 
-const userData = {
-  name: responseData?.user?.name || email.split('@')[0],
-  email: responseData?.user?.email || email,
-  role: responseData?.user?.role || 'CUSTOMER',
-  avatar: responseData?.user?.profileImage || responseData?.user?.name?.charAt(0).toUpperCase() || 'A',
-};
-
-login(userData, token);
-redirectBasedOnRole(userData.role);
+      login(userData, token);
+      redirectBasedOnRole(userData.role);
 
     } catch (err: any) {
-      setError(err.message || 'Invalid email or password');
+      setError(err.message || err?.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -65,26 +66,27 @@ redirectBasedOnRole(userData.role);
 
     try {
       const res: any = await axiosSecure.post('/auth/login', credentials);
-    
-    const token = res?.accessToken || res?.data?.accessToken || 'demo-token-' + roleType.toLowerCase();
-     
-    
-        localStorage.setItem('token', token);
       
+      const token = res?.data?.data?.accessToken || res?.data?.accessToken || res?.accessToken;
+      const userObj = res?.data?.data?.user || res?.data?.user || res?.user;
+      
+      if (token) {
+        localStorage.setItem('token', token);
+      }
       
       const userData = {
-        name: res?.user?.name || credentials.name,
-        email: res?.user?.email || credentials.email,
-        role: roleType,
-        avatar: roleType.charAt(0),
+        name: userObj?.name || credentials.name,
+        email: userObj?.email || credentials.email,
+        role: userObj?.role || roleType,
+        avatar: userObj?.profileImage || roleType.charAt(0),
       };
 
       login(userData, token);
-      redirectBasedOnRole(roleType);
+      redirectBasedOnRole(userData.role);
     } catch (err: any) {
       // Fallback demo login jodi backend e demo account seed kora na thake
       const fallbackToken = 'demo-token-' + roleType.toLowerCase();
-  localStorage.setItem('token', fallbackToken);
+      localStorage.setItem('token', fallbackToken);
       
       const fallbackUser = {
         name: credentials.name,
@@ -155,12 +157,10 @@ redirectBasedOnRole(userData.role);
                 aria-label="Toggle password visibility"
               >
                 {showPassword ? (
-                  // Eye Slash Icon (Hide)
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                   </svg>
                 ) : (
-                  // Eye Icon (Show)
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
