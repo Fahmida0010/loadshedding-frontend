@@ -1,16 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 
-// Leaflet component-gulo ke Server Side Rendering (SSR) theke bad dewar jonno dynamic import kora holo
 const MapWithNoSSR = dynamic(
   () => import('./MapComponent'),
   { ssr: false }
 );
 
-// Bangladesh-er 25-ti bibhinno shohor o area-er dummy coordinates ebong schedules
 const fallbackBangladeshOutages = [
   { id: 1, title: "Grid Maintenance", location: "Amberkhana, Sylhet", lat: 24.8949, lng: 91.8687, status: "ACTIVE", time: "10:00 AM - 1:00 PM" },
   { id: 2, title: "Emergency Load Shedding", location: "Zindabazar, Sylhet", lat: 24.8978, lng: 91.8710, status: "SCHEDULED", time: "2:00 PM - 4:00 PM" },

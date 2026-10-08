@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -16,7 +17,7 @@ const redIcon = L.icon({
 export default function MapComponent({ outages }: { outages: any[] }) {
   return (
     <MapContainer 
-      center={[23.6850, 90.3563]} // Bangladesh Center
+      center={[23.6850, 90.3563]} 
       zoom={7} 
       scrollWheelZoom={false}
       style={{ height: '100%', width: '100%', borderRadius: '1rem' }}
@@ -31,7 +32,8 @@ export default function MapComponent({ outages }: { outages: any[] }) {
         const lng = item.lng || item.longitude || 90.3563;
 
         return (
-          <div key={item.id || index}>
+          // ✅ div এর পরিবর্তে React Fragment (<> o </>) ব্যবহার করা হয়েছে
+          <React.Fragment key={item.id || index}>
             <Marker position={[lat, lng]} icon={redIcon}>
               <Popup>
                 <div className="p-1 space-y-1">
@@ -56,7 +58,7 @@ export default function MapComponent({ outages }: { outages: any[] }) {
                 fillOpacity: 0.3 
               }} 
             />
-          </div>
+          </React.Fragment>
         );
       })}
     </MapContainer>

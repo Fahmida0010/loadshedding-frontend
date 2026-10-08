@@ -82,6 +82,7 @@ const menus: Record<UserRole, MenuItem[]> = {
       icon: UserCheck,
     },
     { label: "Payment History", href: "/dashboard/admin/payments", icon: CreditCard },
+    { label: "Audit Logs", href: "/dashboard/admin/audit-logs", icon: FileText },
   ],
 };
 

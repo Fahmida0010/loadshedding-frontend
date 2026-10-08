@@ -81,7 +81,7 @@ export default function Footer() {
 
         {/* Bottom Bar with Real-colored Social Icons & Gray Hover */}
         <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500">
-          <p>&copy; {currentYear} LoadShedding Tracker. All rights reserved.</p>
+          <p>&copy; {currentYear} LoadShedding & Power Management. All rights reserved.</p>
           
           {/* Social Icons with Real Brand Colors & Gray Hover */}
           <div className="flex items-center space-x-5 mt-4 sm:mt-0">
