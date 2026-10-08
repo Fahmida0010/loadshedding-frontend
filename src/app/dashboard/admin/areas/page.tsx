@@ -118,7 +118,7 @@ export default function AreaManagementPage() {
         `/areas?${params.toString()}`
       );
 
-      const apiData = response.data.meta;
+      const apiData = response.data;
 
       // Extract area data safely
       const areaData = Array.isArray(apiData?.data)
