@@ -32,35 +32,36 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
-    try {
-      const res: any = await axiosSecure.post('/auth/register', formData);
-      
-      // Token store korar jonno
-      const token = res?.token || res?.data?.token;
-      if (token) {
-        localStorage.setItem('token', token);
-      }
+  try {
+  const res: any = await axiosSecure.post('/auth/register', formData);
+  
+  // ব্যাকএন্ডের রেসপন্স স্ট্রাকচার অনুযায়ী accessToken এভাবে ধরতে হবে:
+  const token = res?.accessToken || res?.data?.accessToken || res?.token;
+  
+  if (token) {
+    localStorage.setItem('token', token);
+  }
 
-      // User data extract kora
-      const responseUser = res?.user || res?.data?.user || {
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-      };
+  // User data extract kora
+  const responseUser = res?.user || res?.data?.user || {
+    name: formData.name,
+    email: formData.email,
+    role: formData.role,
+  };
 
-      // Zustand store e user save kora jate navbar e profile icon show kore
-      login(responseUser,token);
+  // Zustand store e user & token save kora
+  login(responseUser, token);
 
-      // Role onusare sothik dashboard e redirect kora
-      const role = responseUser.role;
-      if (role === 'ADMIN') {
-        router.push('/dashboard/admin');
-      } else if (role === 'TECHNICIAN') {
-        router.push('/dashboard/technician');
-      } else {
-        router.push('/dashboard/customer');
-      }
-
+  // Role onusare sothik dashboard e redirect kora
+  const role = responseUser.role;
+  if (role === 'ADMIN') {
+    router.push('/dashboard/admin');
+  } else if (role === 'TECHNICIAN') {
+    router.push('/dashboard/technician');
+  } else {
+    router.push('/dashboard/customer');
+  }   
+   
     } catch (err: any) {
       console.log('Register Error:', err);
 

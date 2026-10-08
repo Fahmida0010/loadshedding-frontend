@@ -10,7 +10,7 @@ import { useAuthStore } from '@/src/store/useAuthStore';
 // Ekta matro Axios instance toiri kora holo
 const axiosSecure = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1',
-  timeout: 60000,
+  // timeout: 60000,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export const useAxiosSecure = () => {
 
     // Response Interceptor: Error handle ba unauthorized hole login e pathanor jonno
     const responseInterceptor = axiosSecure.interceptors.response.use(
-      (response) => response.data,
+      (response) => response,
       async (error) => {
         const status = error.response?.status;
         if (status === 401 || status === 403) {
