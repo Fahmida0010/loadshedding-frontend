@@ -1,39 +1,39 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeLanguageProvider } from "../context/ThemeLanguageContext";
 import QueryProvider from "../providers/QueryProvider";
 import ClientLayout from "./components/ClientLayout";
-import { ThemeLanguageProvider } from "../context/ThemeLanguageContext";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+	variable: "--font-geist-sans",
+	subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+	variable: "--font-geist-mono",
+	subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Load Shedding & power management",
-  description:
-    "Load Shedding & power management system to track and manage power outages effectively.",
+	title: "Load Shedding & power management",
+	description:
+		"Load Shedding & power management system to track and manage power outages effectively.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <QueryProvider>
-          <ClientLayout>
-            <ThemeLanguageProvider>{children}</ThemeLanguageProvider>
-            </ClientLayout>
-        </QueryProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html
+			lang="en"
+			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+		>
+			<body className="min-h-full flex flex-col">
+				<QueryProvider>
+					<ClientLayout>
+						<ThemeLanguageProvider>{children}</ThemeLanguageProvider>
+					</ClientLayout>
+				</QueryProvider>
+			</body>
+		</html>
+	);
 }

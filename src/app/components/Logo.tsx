@@ -6,10 +6,7 @@ interface LogoProps {
 	size?: "sm" | "md" | "lg";
 }
 
-export default function Logo({
-	className = "",
-	size = "md",
-}: LogoProps) {
+export default function Logo({ className = "", size = "md" }: LogoProps) {
 	const sizes = {
 		sm: {
 			logo: "h-9 w-9",
@@ -31,14 +28,9 @@ export default function Logo({
 	const currentSize = sizes[size];
 
 	return (
-		<Link
-			href="/"
-			className={`group flex items-center gap-2 ${className}`}
-		>
+		<Link href="/" className={`group flex items-center gap-2 ${className}`}>
 			{/* Logo */}
-			<div
-				className={`relative shrink-0 ${currentSize.logo}`}
-			>
+			<div className={`relative shrink-0 ${currentSize.logo}`}>
 				<Image
 					src="/elec.png"
 					alt="Load Shedding Logo"
