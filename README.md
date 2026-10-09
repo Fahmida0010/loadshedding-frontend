@@ -16,7 +16,7 @@ A full-stack enterprise-grade web application designed to track, manage, and opt
 ## 🔐 Default Admin Credentials
 
 * **Email:** `admin@demo.com`
-* **Password:** `Password248` 
+* **Password:** `Password369` 
 
 ---
 
